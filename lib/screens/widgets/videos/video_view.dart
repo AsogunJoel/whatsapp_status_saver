@@ -4,8 +4,10 @@ import 'package:chewie/chewie.dart';
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:whatsapp_status_saver/providers/adstate.dart';
 import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
 
 class VideoView extends StatefulWidget {
@@ -24,6 +26,10 @@ class _VideoViewState extends State<VideoView>
   @override
   void initState() {
     super.initState();
+    Provider.of<GetStatusProvider>(
+      context,
+      listen: false,
+    ).imageSaved = false;
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 260),
@@ -50,7 +56,7 @@ class _VideoViewState extends State<VideoView>
       allowMuting: true,
       autoInitialize: true,
       autoPlay: false,
-      looping: true,
+      looping: false,
       allowPlaybackSpeedChanging: true,
       errorBuilder: (context, errorMessage) {
         return Dialog(
@@ -67,9 +73,35 @@ class _VideoViewState extends State<VideoView>
         if (!_chewieController!.isFullScreen) {
           SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
         }
+        if (!_chewieController!.isPlaying) {}
       },
     );
+    _loadInterstitialAd();
     _chewieController!.autoInitialize;
+  }
+
+  InterstitialAd? _interstitialAd;
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdState.interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              _loadInterstitialAd();
+            },
+          );
+          setState(() {
+            _interstitialAd = ad;
+          });
+        },
+        onAdFailedToLoad: (err) {
+          print('Failed to load an interstitial ad: ${err.message}');
+        },
+      ),
+    );
   }
 
   @override
@@ -108,8 +140,9 @@ class _VideoViewState extends State<VideoView>
                     height: 30.0,
                     width: 30.0,
                     child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation(Colors.blue),
-                        strokeWidth: 1.0),
+                      valueColor: AlwaysStoppedAnimation(Colors.blue),
+                      strokeWidth: 1.0,
+                    ),
                   ),
                 ),
         ),
@@ -152,30 +185,82 @@ class _VideoViewState extends State<VideoView>
                                   ),
                                 ),
                                 onPressed: () {
+                                  // if (_interstitialAd == null) {
+                                  //   _loadInterstitialAd();
+                                  // }
                                   Navigator.of(context).pop();
+                                  ScaffoldMessenger.of(context)
+                                      .clearSnackBars();
                                   _animationController!.reverse();
-                                  statusProvider
-                                      .saveImagetoGallery(widget.videoPath)
-                                      .then(
-                                    (value) {
-                                      ScaffoldMessenger.of(context)
+                                  statusProvider.imageSaved
+                                      ? ScaffoldMessenger.of(context)
                                           .showSnackBar(
-                                        const SnackBar(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(10),
-                                              topRight: Radius.circular(10),
+                                          const SnackBar(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10),
+                                              ),
+                                            ),
+                                            backgroundColor: Colors.green,
+                                            content: Text(
+                                              'Video already saved',
+                                              style: TextStyle(fontSize: 15),
                                             ),
                                           ),
-                                          backgroundColor: Colors.green,
-                                          content: Text(
-                                            'Video saved',
-                                            style: TextStyle(fontSize: 15),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
+                                        )
+                                      : statusProvider
+                                          .saveImagetoGallery(widget.videoPath)
+                                          .then(
+                                          (value) {
+                                            if (_interstitialAd != null) {
+                                              _interstitialAd?.show();
+                                              ScaffoldMessenger.of(context)
+                                                  .clearSnackBars();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(10),
+                                                      topRight:
+                                                          Radius.circular(10),
+                                                    ),
+                                                  ),
+                                                  backgroundColor: Colors.green,
+                                                  content: Text(
+                                                    'Video saved',
+                                                    style:
+                                                        TextStyle(fontSize: 15),
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(10),
+                                                      topRight:
+                                                          Radius.circular(10),
+                                                    ),
+                                                  ),
+                                                  backgroundColor: Colors.green,
+                                                  content: Text(
+                                                    'Video saved',
+                                                    style:
+                                                        TextStyle(fontSize: 15),
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        );
                                 },
                                 child: const Text('Continue'),
                               ),
@@ -186,6 +271,9 @@ class _VideoViewState extends State<VideoView>
                     ),
                   ),
                 );
+                if (_interstitialAd == null) {
+                  _loadInterstitialAd();
+                }
               },
             ),
             Bubble(
@@ -195,11 +283,12 @@ class _VideoViewState extends State<VideoView>
               icon: Icons.share,
               titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
               onPress: () {
-                statusProvider.shareImage(widget.videoPath).then(
-                  (value) {
-                    _animationController!.reverse();
-                  },
-                );
+                if (_interstitialAd != null) {
+                  _interstitialAd?.show();
+                }
+                statusProvider.shareImage(widget.videoPath).then((value) {
+                  _animationController!.reverse();
+                });
               },
             ),
             Bubble(

@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/directory_response/check_directory_response.dart';
+import 'package:whatsapp_status_saver/providers/adstate.dart';
 
 import '../../../providers/get_statuses_provider.dart';
 import '../../../utils/get_thumbails.dart';
@@ -16,13 +18,65 @@ class WhatsappVideoPage extends StatefulWidget {
   State<WhatsappVideoPage> createState() => _WhatsappVideoPageState();
 }
 
-class _WhatsappVideoPageState extends State<WhatsappVideoPage>
+class _WhatsappVideoPageState extends State<WhatsappVideoPage> {
+  BannerAd? _bannerAd;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final adState = Provider.of<AdState>(
+      context,
+    );
+    adState.initialization.then((value) {
+      setState(() {
+        _bannerAd = BannerAd(
+          size: AdSize.banner,
+          adUnitId: AdState.videobannerAdUnitId,
+          listener: adState.adListener,
+          request: const AdRequest(),
+        )..load();
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (_bannerAd != null)
+          Container(
+            color: Colors.white,
+            child: SizedBox(
+              height: 50,
+              child: AdWidget(ad: _bannerAd!),
+            ),
+          ),
+        Expanded(
+          child: VideoGrid(),
+        ),
+      ],
+    );
+  }
+}
+
+class VideoGrid extends StatefulWidget {
+  const VideoGrid({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<VideoGrid> createState() => _VideoGridState();
+}
+
+class _VideoGridState extends State<VideoGrid>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     return Consumer<GetStatusProvider>(
       builder: (context, file, child) {
         if (file.itemsData.status == Status.COMPLETED &&

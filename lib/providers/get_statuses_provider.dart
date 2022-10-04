@@ -63,12 +63,12 @@ class GetStatusProvider with ChangeNotifier {
       DirectoryResponse.loading('');
 
   DirectoryResponse<List<StatusModel>> get itemsData => _itemsData;
-  void getYoWhatAppStatus({ctx}) async {
-    _itemsData = DirectoryResponse.loading('loading...');
+  Future<void> getYoWhatAppStatus({ctx}) async {
     if (status!.isDenied && status2!.isDenied) {
       initializer();
     }
-    if (status!.isGranted && status2!.isGranted) {
+    if (status!.isGranted || status2!.isGranted) {
+      _itemsData = DirectoryResponse.loading('loading... ');
       final directory = Directory(AppConstants.YowhatsppPath);
       if (directory.existsSync()) {
         try {
@@ -86,8 +86,7 @@ class GetStatusProvider with ChangeNotifier {
               .toList()
             ..sort(
               (l, r) => l.time.compareTo(r.time),
-            )
-            ..reversed.toList();
+            );
           _getVideosss = items
               .where(
                 (element) => element.status.path.contains('.mp4'),
@@ -95,28 +94,28 @@ class GetStatusProvider with ChangeNotifier {
               .toList()
             ..sort(
               (l, r) => l.time.compareTo(r.time),
-            )
-            ..reversed;
-          _getImages = _getImagesss.reversed.toList();
+            );
           _getVideos = _getVideosss.reversed.toList();
+          _getImages = _getImagesss.reversed.toList();
           _itemsData = DirectoryResponse.completed(items);
+          notifyListeners();
         } catch (e) {
           _itemsData = DirectoryResponse.error(
             e.toString(),
           );
         }
-        notifyListeners();
       } else {
         _itemsData = DirectoryResponse.error(
-          'Something went wrong,\nYoWhatsaap not installed',
+          'Something went wrong,\nYoWhatsapp not installed',
         );
+        notifyListeners();
         showDialog(
           context: ctx,
           builder: (context) {
             return AlertDialog(
-              title: const Text('YoWhatsApp not installed'),
+              title: const Text('YoWhatsapp not installed'),
               content: const Text(
-                'YoWhatsApp doesn\'t seem to be installed on your device.',
+                'YoWhatsapp doesn\'t seem to be installed on your device.',
               ),
               actions: [
                 ElevatedButton(
@@ -134,11 +133,11 @@ class GetStatusProvider with ChangeNotifier {
   }
 
   void getWhatsappStatus({ctx}) async {
-    _itemsData = DirectoryResponse.loading('loading... ');
     if (status!.isDenied || status2!.isDenied) {
       initializer();
     }
     if (status!.isGranted || status2!.isGranted) {
+      _itemsData = DirectoryResponse.loading('loading... ');
       final directory = Directory(AppConstants.WhatsppPath);
       if (directory.existsSync()) {
         try {
@@ -156,8 +155,7 @@ class GetStatusProvider with ChangeNotifier {
               .toList()
             ..sort(
               (l, r) => l.time.compareTo(r.time),
-            )
-            ..reversed.toList();
+            );
           _getVideosss = items
               .where(
                 (element) => element.status.path.contains('.mp4'),
@@ -165,8 +163,7 @@ class GetStatusProvider with ChangeNotifier {
               .toList()
             ..sort(
               (l, r) => l.time.compareTo(r.time),
-            )
-            ..reversed;
+            );
           _getVideos = _getVideosss.reversed.toList();
           _getImages = _getImagesss.reversed.toList();
           _itemsData = DirectoryResponse.completed(items);
@@ -227,8 +224,7 @@ class GetStatusProvider with ChangeNotifier {
               .toList()
             ..sort(
               (l, r) => l.time.compareTo(r.time),
-            )
-            ..reversed.toList();
+            );
           _getVideosss = items
               .where(
                 (element) => element.status.path.contains('.mp4'),
@@ -236,8 +232,7 @@ class GetStatusProvider with ChangeNotifier {
               .toList()
             ..sort(
               (l, r) => l.time.compareTo(r.time),
-            )
-            ..reversed;
+            );
           _getVideos = _getVideosss.reversed.toList();
           _getImages = _getImagesss.reversed.toList();
           _itemsData = DirectoryResponse.completed(items);
@@ -275,8 +270,11 @@ class GetStatusProvider with ChangeNotifier {
     }
   }
 
+  bool imageSaved = false;
   Future<dynamic> saveImagetoGallery(imagePath) async {
     await ImageGallerySaver.saveFile(imagePath);
+    imageSaved = true;
+    notifyListeners();
   }
 
   bool shareloading = false;

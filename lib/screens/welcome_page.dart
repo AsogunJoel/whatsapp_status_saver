@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:whatsapp_status_saver/providers/adstate.dart';
 import 'package:whatsapp_status_saver/providers/bottom_nav.dart';
 import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
 import 'package:whatsapp_status_saver/screens/wa_business/wabusiness_home.dart';
@@ -24,12 +26,13 @@ class _WelcomePageState extends State<WelcomePage> {
       context,
       listen: false,
     ).initializer(ctx: context);
-    // Future.delayed(
-    //   const Duration(seconds: 2),
-    // ).then(
-    //   (value) => {},
-    // );
-    FlutterNativeSplash.remove();
+    Future.delayed(
+      const Duration(seconds: 2),
+    ).then(
+      (value) {
+        FlutterNativeSplash.remove();
+      },
+    );
   }
 
   @override

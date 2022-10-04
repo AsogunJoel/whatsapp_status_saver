@@ -66,7 +66,22 @@ class _YoWhatsAppState extends State<YoWhatsAppHomePage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            value.getYoWhatAppStatus(ctx: context);
+            value.getYoWhatAppStatus(ctx: context).then(
+              (value) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                      ),
+                    ),
+                    backgroundColor: Colors.green,
+                    content: Text('Statuses refreshed'),
+                  ),
+                );
+              },
+            );
           },
           child: const Icon(Icons.refresh),
         ),
