@@ -167,48 +167,27 @@ class _ImageViewState extends State<ImageView>
                                           (value) {
                                             if (_interstitialAd != null) {
                                               _interstitialAd?.show();
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(10),
-                                                      topRight:
-                                                          Radius.circular(10),
-                                                    ),
-                                                  ),
-                                                  backgroundColor: Colors.green,
-                                                  content: Text(
-                                                    'Picture saved',
-                                                    style:
-                                                        TextStyle(fontSize: 15),
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(10),
-                                                      topRight:
-                                                          Radius.circular(10),
-                                                    ),
-                                                  ),
-                                                  backgroundColor: Colors.green,
-                                                  content: Text(
-                                                    'Picture saved',
-                                                    style:
-                                                        TextStyle(fontSize: 15),
-                                                  ),
-                                                ),
-                                              );
                                             }
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(10),
+                                                    topRight:
+                                                        Radius.circular(10),
+                                                  ),
+                                                ),
+                                                backgroundColor: Colors.green,
+                                                content: Text(
+                                                  'Picture saved',
+                                                  style:
+                                                      TextStyle(fontSize: 15),
+                                                ),
+                                              ),
+                                            );
                                           },
                                         );
                                 },

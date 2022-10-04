@@ -40,11 +40,6 @@ class _WhatsappImagePageState extends State<WhatsappImagePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     super.dispose();
     _bannerAd!.dispose();

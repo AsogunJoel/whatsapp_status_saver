@@ -215,50 +215,29 @@ class _VideoViewState extends State<VideoView>
                                           (value) {
                                             if (_interstitialAd != null) {
                                               _interstitialAd?.show();
-                                              ScaffoldMessenger.of(context)
-                                                  .clearSnackBars();
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(10),
-                                                      topRight:
-                                                          Radius.circular(10),
-                                                    ),
-                                                  ),
-                                                  backgroundColor: Colors.green,
-                                                  content: Text(
-                                                    'Video saved',
-                                                    style:
-                                                        TextStyle(fontSize: 15),
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(10),
-                                                      topRight:
-                                                          Radius.circular(10),
-                                                    ),
-                                                  ),
-                                                  backgroundColor: Colors.green,
-                                                  content: Text(
-                                                    'Video saved',
-                                                    style:
-                                                        TextStyle(fontSize: 15),
-                                                  ),
-                                                ),
-                                              );
                                             }
+                                            ScaffoldMessenger.of(context)
+                                                .clearSnackBars();
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(10),
+                                                    topRight:
+                                                        Radius.circular(10),
+                                                  ),
+                                                ),
+                                                backgroundColor: Colors.green,
+                                                content: Text(
+                                                  'Video saved',
+                                                  style:
+                                                      TextStyle(fontSize: 15),
+                                                ),
+                                              ),
+                                            );
                                           },
                                         );
                                 },
@@ -271,9 +250,6 @@ class _VideoViewState extends State<VideoView>
                     ),
                   ),
                 );
-                if (_interstitialAd == null) {
-                  _loadInterstitialAd();
-                }
               },
             ),
             Bubble(

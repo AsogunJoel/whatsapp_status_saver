@@ -16,10 +16,17 @@ class _YoWhatsAppState extends State<YoWhatsAppHomePage> {
   @override
   void initState() {
     super.initState();
-    Provider.of<GetStatusProvider>(
-      context,
-      listen: false,
-    ).initializerYowhatsapp(ctx: context);
+
+    Future.delayed(
+      const Duration(milliseconds: 500),
+    ).then(
+      (value) {
+        Provider.of<GetStatusProvider>(
+          context,
+          listen: false,
+        ).initializerYowhatsapp(ctx: context);
+      },
+    );
   }
 
   @override

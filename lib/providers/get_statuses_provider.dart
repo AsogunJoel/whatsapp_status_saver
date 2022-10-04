@@ -11,13 +11,11 @@ import 'package:whatsapp_status_saver/models/status_model.dart';
 class GetStatusProvider with ChangeNotifier {
   List<StatusModel> _getImages = [];
   List<StatusModel> _getImagesss = [];
-  // List<StatusModel> _getImg = [];
   List<StatusModel> _getVideos = [];
   List<StatusModel> _getVideosss = [];
   PermissionStatus? status;
   PermissionStatus? status2;
   List<StatusModel> items = [];
-  // List<StatusModel> itms = [];
 
   List<StatusModel> get getImages {
     return _getImages;
@@ -51,6 +49,7 @@ class GetStatusProvider with ChangeNotifier {
   }
 
   clearData() {
+    _itemsData = DirectoryResponse.loading('loading... ');
     items.clear();
     _getImagesss.clear();
     _getVideosss.clear();
@@ -289,3 +288,73 @@ class GetStatusProvider with ChangeNotifier {
     await FlutterNativeApi.printImage(imagePath, imagePathTitle);
   }
 }
+
+
+// Future<void> getYoWhatAppStatus({ctx}) async {
+//     if (status!.isDenied && status2!.isDenied) {
+//       initializer();
+//     }
+//     if (status!.isGranted || status2!.isGranted) {
+//       _itemsData = DirectoryResponse.loading('loading... ');
+//       final directory = Directory(AppConstants.YowhatsppPath);
+//       if (directory.existsSync()) {
+//         try {
+//           clearData();
+//           items = directory
+//               .listSync()
+//               .map(
+//                 (e) => StatusModel.fromRTDB(e),
+//               )
+//               .toList();
+//           _getImagesss = items
+//               .where(
+//                 (element) => element.status.path.endsWith('.jpg'),
+//               )
+//               .toList()
+//             ..sort(
+//               (l, r) => l.time.compareTo(r.time),
+//             );
+//           _getVideosss = items
+//               .where(
+//                 (element) => element.status.path.contains('.mp4'),
+//               )
+//               .toList()
+//             ..sort(
+//               (l, r) => l.time.compareTo(r.time),
+//             );
+//           _getVideos = _getVideosss.reversed.toList();
+//           _getImages = _getImagesss.reversed.toList();
+//           _itemsData = DirectoryResponse.completed(items);
+//           notifyListeners();
+//         } catch (e) {
+//           _itemsData = DirectoryResponse.error(
+//             e.toString(),
+//           );
+//         }
+//       } else {
+//         _itemsData = DirectoryResponse.error(
+//           'Something went wrong,\nYoWhatsapp not installed',
+//         );
+//         notifyListeners();
+//         showDialog(
+//           context: ctx,
+//           builder: (context) {
+//             return AlertDialog(
+//               title: const Text('YoWhatsapp not installed'),
+//               content: const Text(
+//                 'YoWhatsapp doesn\'t seem to be installed on your device.',
+//               ),
+//               actions: [
+//                 ElevatedButton(
+//                   onPressed: () {
+//                     Navigator.of(context).pop();
+//                   },
+//                   child: const Text('ok'),
+//                 )
+//               ],
+//             );
+//           },
+//         );
+//       }
+//     }
+//   }

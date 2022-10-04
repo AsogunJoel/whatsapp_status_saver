@@ -8,3 +8,11 @@ Future<String> getThumbnail(path) async {
       quality: 2);
   return thumb!;
 }
+
+thumbnail(path) async {
+  String? thumb = await VideoThumbnail.thumbnailFile(
+      video: path,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      quality: 2);
+  return thumb!;
+}

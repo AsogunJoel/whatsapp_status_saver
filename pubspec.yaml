@@ -60,19 +60,20 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter_icons:
-  android: "assets/images/Untitled design.png"
+  android: "launcher_icon"
   ios: true
-  image_path: "assets/images/Untitled design.png"
+  image_path: "assets/images/logo2.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   web:
-    generate: true
-    image_path: "assets/images/Untitled design.png"
-    background_color: "#FFFFFF"
-    theme_color: "#FFFFFF"
+    generate: false
+    image_path: "path/to/image.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
   windows:
-    generate: true
+    generate: false
     image_path: "path/to/image.png"
     icon_size: 48 # min:48, max:256, default: 48
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -135,7 +136,7 @@ flutter_native_splash:
 
   # The image parameter allows you to specify an image used in the splash screen.  It must be a
   # png file and should be sized for 4x pixel density.
-  image: assets/images/Untitled design.png
+  image: assets/images/logo2.png
 
   # The branding property allows you to specify an image used as branding in the splash screen.
   # It must be a png file. It is supported for Android, iOS and the Web.  For Android 12,

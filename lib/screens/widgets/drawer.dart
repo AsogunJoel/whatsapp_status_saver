@@ -81,7 +81,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
             height: 200,
           ),
           const Text(
-            'by \nCODEBASE',
+            'by \nSHOGUNCODER',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontStyle: FontStyle.italic,
