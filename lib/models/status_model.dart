@@ -1,12 +1,11 @@
 import 'dart:io';
 
-import 'package:video_thumbnail/video_thumbnail.dart';
-import 'package:whatsapp_status_saver/utils/get_thumbails.dart';
+import 'package:flutter/services.dart';
 
 class StatusModel {
   final FileSystemEntity status;
   final DateTime time;
-  String? thumbnail;
+  Uint8List? thumbnail;
 
   StatusModel({
     required this.status,
@@ -18,7 +17,6 @@ class StatusModel {
     return StatusModel(
       status: data,
       time: data.statSync().modified,
-      // thumbnail: thumbnail(path),
     );
   }
 }
