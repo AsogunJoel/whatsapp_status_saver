@@ -9,3 +9,4 @@ Future<String> getThumbnail(path) async {
   );
   return thumb!;
 }
+

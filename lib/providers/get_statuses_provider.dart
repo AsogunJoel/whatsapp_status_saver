@@ -269,6 +269,75 @@ class GetStatusProvider with ChangeNotifier {
     }
   }
 
+  void getGBWhatsappStatus({ctx}) async {
+    _itemsData = DirectoryResponse.loading('loading... ');
+    if (status!.isDenied || status2!.isDenied) {
+      initializerWABusiness();
+    }
+    if (status!.isGranted || status2!.isGranted) {
+      final directory = Directory(AppConstants.GBWhatsppPath);
+      if (directory.existsSync()) {
+        try {
+          clearData();
+          items = directory
+              .listSync()
+              .map(
+                (e) => StatusModel.fromRTDB(e),
+              )
+              .toList();
+          _getImagesss = items
+              .where(
+                (element) => element.status.path.endsWith('.jpg'),
+              )
+              .toList()
+            ..sort(
+              (l, r) => l.time.compareTo(r.time),
+            );
+          _getVideosss = items
+              .where(
+                (element) => element.status.path.contains('.mp4'),
+              )
+              .toList()
+            ..sort(
+              (l, r) => l.time.compareTo(r.time),
+            );
+          _getVideos = _getVideosss.reversed.toList();
+          _getImages = _getImagesss.reversed.toList();
+          _itemsData = DirectoryResponse.completed(items);
+          notifyListeners();
+        } catch (e) {
+          _itemsData = DirectoryResponse.error(
+            e.toString(),
+          );
+        }
+      } else {
+        _itemsData = DirectoryResponse.error(
+          'Something went wrong,\nGB WhatsApp not installed',
+        );
+        notifyListeners();
+        showDialog(
+          context: ctx,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Business GB WhatsApp not installed'),
+              content: const Text(
+                'GB whatsApp doesn\'t seem to be installed on your device.',
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('ok'),
+                )
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
+
   bool imageSaved = false;
   Future<dynamic> saveImagetoGallery(imagePath) async {
     await ImageGallerySaver.saveFile(imagePath);

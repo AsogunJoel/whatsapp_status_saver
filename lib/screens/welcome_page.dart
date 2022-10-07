@@ -4,6 +4,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/providers/bottom_nav.dart';
 import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
+import 'package:whatsapp_status_saver/screens/gbwhatsapp/gb_whatsapp.dart';
 import 'package:whatsapp_status_saver/screens/wa_business/wabusiness_home.dart';
 import 'package:whatsapp_status_saver/screens/whatsapp/whatsapp_home.dart';
 import 'package:whatsapp_status_saver/screens/widgets/drawer.dart';
@@ -169,6 +170,41 @@ class _WelcomePageState extends State<WelcomePage> {
                           Navigator.of(context).push(
                             CupertinoPageRoute(
                               builder: (context) => const WABusinessHomePage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(8.0),
+                    child: Material(
+                      elevation: 5,
+                      shadowColor: Colors.green.withOpacity(1),
+                      borderRadius: BorderRadius.circular(10),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        leading: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Image.asset(
+                              'assets/images/whatsapp-business-logo.png'),
+                        ),
+                        tileColor: Colors.white,
+                        title: const Text(
+                          'GB WhatsApp',
+                          style: TextStyle(
+                            letterSpacing: .5,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        onTap: () {
+                          value2.clearData();
+                          value.formatIndex();
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => const GBWhatsappHomePage(),
                             ),
                           );
                         },

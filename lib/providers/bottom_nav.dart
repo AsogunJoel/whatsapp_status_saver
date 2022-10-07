@@ -4,6 +4,7 @@ class BottomNavProvider with ChangeNotifier {
   int _currentIndex = 0;
   int _whatsappCurrentIndex = 0;
   int _waBusinessCurrentIndex = 0;
+  int _GBCurrentIndex = 0;
   PageController controller = PageController();
 
   int get currentIndex {
@@ -14,6 +15,7 @@ class BottomNavProvider with ChangeNotifier {
     _currentIndex = 0;
     _whatsappCurrentIndex = 0;
     _waBusinessCurrentIndex = 0;
+    _GBCurrentIndex = 0;
     notifyListeners();
   }
 
@@ -25,24 +27,47 @@ class BottomNavProvider with ChangeNotifier {
     return _whatsappCurrentIndex;
   }
 
+  int get gBCurrentIndex {
+    return _GBCurrentIndex;
+  }
+
   changePageIndex(int value) {
-    controller.animateToPage(value,
-        duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+    controller.animateToPage(
+      value,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
     _currentIndex = value;
     notifyListeners();
   }
 
   changewhatsappPageIndex(int value) {
-    controller.animateToPage(value,
-        duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+    controller.animateToPage(
+      value,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
     _whatsappCurrentIndex = value;
     notifyListeners();
   }
 
   changewaBusinessPageIndex(int value) {
-    controller.animateToPage(value,
-        duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+    controller.animateToPage(
+      value,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
     _waBusinessCurrentIndex = value;
+    notifyListeners();
+  }
+
+  changewaGBPageIndex(int value) {
+    controller.animateToPage(
+      value,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
+    _GBCurrentIndex = value;
     notifyListeners();
   }
 }
