@@ -112,6 +112,17 @@ class _VideoGridState extends State<VideoGrid>
               );
             },
           );
+        } else if (file.itemsData.status == Status.ERROR) {
+          return Center(
+            child: Text(
+              file.itemsData.message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                letterSpacing: .5,
+                fontSize: 15,
+              ),
+            ),
+          );
         } else if (file.itemsData.status == Status.LOADING) {
           return const Center(
             child: CircularProgressIndicator(),

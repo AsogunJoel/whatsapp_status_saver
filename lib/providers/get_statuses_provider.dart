@@ -37,6 +37,12 @@ class GetStatusProvider with ChangeNotifier {
     getWABusinessStatus(ctx: ctx);
   }
 
+  initializerGB({ctx}) async {
+    status = await Permission.storage.request();
+    status2 = await Permission.manageExternalStorage.request();
+    getGBWhatsappStatus(ctx: ctx);
+  }
+
   initializerYowhatsapp({ctx}) async {
     status = await Permission.storage.request();
     status2 = await Permission.manageExternalStorage.request();
@@ -312,14 +318,14 @@ class GetStatusProvider with ChangeNotifier {
         }
       } else {
         _itemsData = DirectoryResponse.error(
-          'Something went wrong,\nGB WhatsApp not installed',
+          'Something went wrong,\nGB whatsApp not installed',
         );
         notifyListeners();
         showDialog(
           context: ctx,
           builder: (context) {
             return AlertDialog(
-              title: const Text('Business GB WhatsApp not installed'),
+              title: const Text('GB whatsApp not installed'),
               content: const Text(
                 'GB whatsApp doesn\'t seem to be installed on your device.',
               ),

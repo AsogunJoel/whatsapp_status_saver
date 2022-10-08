@@ -189,7 +189,8 @@ class _WelcomePageState extends State<WelcomePage> {
                         leading: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Image.asset(
-                              'assets/images/whatsapp-business-logo.png'),
+                            'assets/images/whatsapp-business-logo.png',
+                          ),
                         ),
                         tileColor: Colors.white,
                         title: const Text(

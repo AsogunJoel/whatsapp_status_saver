@@ -19,7 +19,7 @@ class _GBWhatsappHomePage extends State<GBWhatsappHomePage> {
     Provider.of<GetStatusProvider>(
       context,
       listen: false,
-    ).initializerWABusiness(ctx: context);
+    ).initializerGB(ctx: context);
   }
 
   @override
