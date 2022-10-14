@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/providers/adstate.dart';
 import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
 
-class ImageView extends StatefulWidget {
+class ImageView extends StatelessWidget {
   const ImageView({
     super.key,
     required this.imagePath,
@@ -15,17 +15,44 @@ class ImageView extends StatefulWidget {
   final String imagePath;
 
   @override
-  State<ImageView> createState() => _ImageViewState();
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      child: Image.file(
+        File(
+          imagePath,
+        ),
+        errorBuilder: (context, error, stackTrace) => const Center(
+          child: Text(
+            'Unavailable, please refresh',
+            textAlign: TextAlign.center,
+          ),
+        ),
+        fit: BoxFit.contain,
+      ),
+    );
+  }
 }
 
-class _ImageViewState extends State<ImageView>
+class ImagePageView extends StatefulWidget {
+  const ImagePageView({super.key, required this.imageIndex});
+  final int imageIndex;
+  @override
+  State<ImagePageView> createState() => _ImagePageViewState();
+}
+
+class _ImagePageViewState extends State<ImagePageView>
     with SingleTickerProviderStateMixin {
   Animation<double>? _animation;
   AnimationController? _animationController;
+  InterstitialAd? _interstitialAd;
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController(initialPage: widget.imageIndex);
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 260),
@@ -42,8 +69,6 @@ class _ImageViewState extends State<ImageView>
       listen: false,
     ).imageSaved = false;
   }
-
-  InterstitialAd? _interstitialAd;
 
   void _loadInterstitialAd() {
     InterstitialAd.load(
@@ -71,8 +96,11 @@ class _ImageViewState extends State<ImageView>
   @override
   void dispose() {
     super.dispose();
+    _pageController.dispose();
     _interstitialAd?.dispose();
   }
+
+  String? imagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -83,21 +111,29 @@ class _ImageViewState extends State<ImageView>
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Image.file(
-          File(
-            widget.imagePath,
-          ),
-          errorBuilder: (context, error, stackTrace) => const Center(
-            child: Text(
-              'Unavailable, please refresh',
-              textAlign: TextAlign.center,
-            ),
-          ),
-          fit: BoxFit.contain,
-        ),
+      body: Consumer<GetStatusProvider>(
+        builder: (context, file, child) {
+          return PageView.builder(
+            controller: _pageController,
+            itemCount: file.getImages.length,
+            itemBuilder: (context, index) {
+              return ImageView(
+                imagePath: file.getImages[index].status.path,
+              );
+            },
+            onPageChanged: (value) {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              setState(() {
+                imagePath = file.getImages[value].status.path;
+              });
+              file.resetimageSaved();
+              _animationController!.reverse();
+              if (_interstitialAd == null) {
+                _loadInterstitialAd();
+              }
+            },
+          );
+        },
       ),
       floatingActionButton: Consumer<GetStatusProvider>(
         builder: (context, statusProvider, child) => FloatingActionBubble(
@@ -137,9 +173,6 @@ class _ImageViewState extends State<ImageView>
                                   ),
                                 ),
                                 onPressed: () {
-                                  // if (_interstitialAd == null) {
-                                  //   _loadInterstitialAd();
-                                  // }
                                   Navigator.of(context).pop();
                                   ScaffoldMessenger.of(context)
                                       .clearSnackBars();
@@ -162,9 +195,9 @@ class _ImageViewState extends State<ImageView>
                                           ),
                                         )
                                       : statusProvider
-                                          .saveImagetoGallery(widget.imagePath)
+                                          .saveImagetoGallery(imagePath)
                                           .then(
-                                          (value) {
+                                          (file) {
                                             if (_interstitialAd != null) {
                                               _interstitialAd?.show();
                                             }
@@ -212,7 +245,7 @@ class _ImageViewState extends State<ImageView>
                 if (_interstitialAd != null) {
                   _interstitialAd?.show();
                 }
-                statusProvider.shareImage(widget.imagePath).then((value) {
+                statusProvider.shareImage(imagePath).then((value) {
                   _animationController!.reverse();
                 });
               },
@@ -229,7 +262,9 @@ class _ImageViewState extends State<ImageView>
               onPress: () {
                 _animationController!.reverse();
                 statusProvider.printImage(
-                    widget.imagePath, widget.imagePath.split('/').last);
+                  imagePath,
+                  imagePath!.split('/').last,
+                );
               },
             ),
             Bubble(

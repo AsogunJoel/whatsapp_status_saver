@@ -345,6 +345,10 @@ class GetStatusProvider with ChangeNotifier {
   }
 
   bool imageSaved = false;
+  resetimageSaved() {
+    imageSaved = false;
+  }
+
   Future<dynamic> saveImagetoGallery(imagePath) async {
     await ImageGallerySaver.saveFile(imagePath);
     imageSaved = true;

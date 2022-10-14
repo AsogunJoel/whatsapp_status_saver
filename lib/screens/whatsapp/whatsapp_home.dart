@@ -27,7 +27,7 @@ class _WhatsAppHomeState extends State<WhatsAppHomePage> {
     return Consumer2<BottomNavProvider, GetStatusProvider>(
       builder: (context, navProvider, value, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('Whatsapp Status Saver'),
+          title: const Text('Whatsapp'),
           centerTitle: true,
         ),
         body: PageView(

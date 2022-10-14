@@ -27,7 +27,7 @@ class _WABusinessHomePage extends State<WABusinessHomePage> {
     return Consumer2<BottomNavProvider, GetStatusProvider>(
       builder: (context, navProvider, value, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('Business Whatsapp Status Saver'),
+          title: const Text('WA Business'),
           centerTitle: true,
         ),
         body: PageView(

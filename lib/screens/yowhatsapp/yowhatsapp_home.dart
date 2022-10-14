@@ -34,7 +34,7 @@ class _YoWhatsAppState extends State<YoWhatsAppHomePage> {
     return Consumer2<BottomNavProvider, GetStatusProvider>(
       builder: (context, navProvider, value, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('YoWhatsapp Status Saver'),
+          title: const Text('YoWhatsapp'),
           centerTitle: true,
         ),
         body: PageView(

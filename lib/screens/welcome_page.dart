@@ -53,21 +53,20 @@ class _WelcomePageState extends State<WelcomePage> {
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
             children: [
-              Padding(
-                padding: const EdgeInsets.all(50.0),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.4,
-                      width: double.infinity,
-                      child: Image.asset(
-                        'assets/images/logo1.png',
-                      ),
+              Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 50),
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    width: double.infinity,
+                    child: Image.asset(
+                      'assets/images/logo1.png',
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     margin: const EdgeInsets.all(8.0),

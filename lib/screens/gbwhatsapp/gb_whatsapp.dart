@@ -27,7 +27,7 @@ class _GBWhatsappHomePage extends State<GBWhatsappHomePage> {
     return Consumer2<BottomNavProvider, GetStatusProvider>(
       builder: (context, navProvider, value, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('GB Whatsapp Status Saver'),
+          title: const Text('GB Whatsapp'),
           centerTitle: true,
         ),
         body: PageView(
