@@ -315,9 +315,7 @@ class _VideoViewState extends State<VideoView>
               },
             ),
           ],
-
           animation: _animation!,
-
           onPress: () => _animationController!.isCompleted
               ? _animationController!.reverse()
               : _animationController!.forward(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/providers/adstate.dart';
@@ -7,11 +8,12 @@ import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
 import 'package:whatsapp_status_saver/screens/welcome_page.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-void main() {
+void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final initFuture = MobileAds.instance.initialize();
   final adState = AdState(initFuture);
+  await dotenv.load(fileName: ".env");
   runApp(
     Provider.value(
       value: adState,

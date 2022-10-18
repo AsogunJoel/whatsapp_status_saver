@@ -48,6 +48,7 @@ dependencies:
   flutter_native_splash: ^2.2.10+1
   google_mobile_ads: ^2.0.1
   webview_flutter: ^3.0.4
+  flutter_dotenv: ^5.0.2
   # export_video_frame: ^0.0.7
 
 dev_dependencies:
