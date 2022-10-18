@@ -109,6 +109,7 @@ class _ImagePageViewState extends State<ImagePageView>
   }
 
   String? imagePath;
+  int? pagenumber;
 
   @override
   Widget build(BuildContext context) {
@@ -133,6 +134,7 @@ class _ImagePageViewState extends State<ImagePageView>
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               setState(() {
                 imagePath = file.getImages[value].status.path;
+                pagenumber = value;
               });
               file.resetimageSaved();
               _animationController!.reverse();
@@ -293,6 +295,7 @@ class _ImagePageViewState extends State<ImagePageView>
                 ).then(
                   (value) {
                     _animationController!.reverse();
+                    statusProvider.removeImage(imagePath);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         shape: RoundedRectangleBorder(
@@ -311,7 +314,6 @@ class _ImagePageViewState extends State<ImagePageView>
                     );
                   },
                 );
-                statusProvider.removeImage(imagePath);
               },
             ),
           ],

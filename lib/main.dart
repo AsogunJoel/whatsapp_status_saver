@@ -14,6 +14,7 @@ void main() async {
   final initFuture = MobileAds.instance.initialize();
   final adState = AdState(initFuture);
   await dotenv.load(fileName: ".env");
+  MobileAds.instance.initialize();
   runApp(
     Provider.value(
       value: adState,

@@ -48,7 +48,13 @@ class GetStatusProvider with ChangeNotifier {
   initializerYowhatsapp({ctx}) async {
     status = await Permission.storage.request();
     status2 = await Permission.manageExternalStorage.request();
-    getYoWhatAppStatus(ctx: ctx);
+    Future.delayed(
+      const Duration(milliseconds: 500),
+    ).then(
+      (value) {
+        getYoWhatAppStatus(ctx: ctx);
+      },
+    );
   }
 
   initializer({ctx}) async {
@@ -95,9 +101,6 @@ class GetStatusProvider with ChangeNotifier {
               (l, r) => l.time.compareTo(r.time),
             );
           _getVideosss = items.where((element) {
-            getThumbnail(element.status.path).then((value) {
-              element.thumbnail = value;
-            });
             return element.status.path.contains('.mp4');
           }).toList()
             ..sort(
@@ -345,6 +348,12 @@ class GetStatusProvider with ChangeNotifier {
         );
       }
     }
+  }
+
+  Future<int> findPersonUsingIndexWhere(String imageName) async {
+    int index =
+        getImages.indexWhere((element) => element.status.path == imageName);
+    return index;
   }
 
   removeImage(imagePath) {

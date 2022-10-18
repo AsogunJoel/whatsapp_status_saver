@@ -12,7 +12,8 @@ class AdState {
     if (Platform.isAndroid) {
       final androidBannerID = dotenv.env['AndroidAdd'];
       print(androidBannerID);
-      return 'ca-app-pub-3940256099942544/6300978111';
+      final androidTestBannerID = dotenv.env['testadd'];
+      return androidBannerID!;
     } else if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/2934735716';
     } else {
@@ -31,8 +32,10 @@ class AdState {
   }
 
   static String get interstitialAdUnitId {
+    // "ca-app-pub-3940256099942544/1033173712"
     if (Platform.isAndroid) {
-      return "ca-app-pub-3940256099942544/1033173712";
+      final androidInterstitialID = dotenv.env['interstitialadd'];
+      return androidInterstitialID!;
     } else if (Platform.isIOS) {
       return "ca-app-pub-3940256099942544/4411468910";
     } else {

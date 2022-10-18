@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/directory_response/check_directory_response.dart';
-import 'package:whatsapp_status_saver/models/status_model.dart';
 import 'package:whatsapp_status_saver/providers/adstate.dart';
 import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
 import 'package:whatsapp_status_saver/screens/widgets/image/image_view.dart';
@@ -19,12 +18,6 @@ class WhatsappImagePage extends StatefulWidget {
 
 class _WhatsappImagePageState extends State<WhatsappImagePage> {
   BannerAd? _bannerAd;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   setState(() {});
-  // }
 
   @override
   void didChangeDependencies() {
@@ -50,13 +43,6 @@ class _WhatsappImagePageState extends State<WhatsappImagePage> {
   void dispose() {
     super.dispose();
     _bannerAd!.dispose();
-  }
-
-  Future<int> findPersonUsingIndexWhere(
-      List<StatusModel> statuses, String imageName) async {
-    int index =
-        statuses.indexWhere((element) => element.status.path == imageName);
-    return index;
   }
 
   @override
@@ -85,22 +71,22 @@ class _WhatsappImagePageState extends State<WhatsappImagePage> {
                       mainAxisSpacing: 5,
                       childAspectRatio: 2.5 / 3,
                     ),
-                    // addAutomaticKeepAlives: true,
                     padding: const EdgeInsets.all(8),
                     itemCount: file.getImages.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
-                          findPersonUsingIndexWhere(file.getImages,
+                          file
+                              .findPersonUsingIndexWhere(
                                   file.getImages[index].status.path)
                               .then(
-                            (value) => Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (context) =>
-                                    ImagePageView(imageIndex: value),
-                              ),
-                            ),
-                          );
+                                (value) => Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    builder: (context) =>
+                                        ImagePageView(imageIndex: value),
+                                  ),
+                                ),
+                              );
                         },
                         child: SingleVideo(
                           filePath: file.getImages[index].status.path,
