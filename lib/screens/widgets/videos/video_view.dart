@@ -43,11 +43,10 @@ class _VideoViewState extends State<VideoView>
       File(widget.videoPath),
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
     );
+    _controller.setLooping(false);
     _controller.addListener(() {
       setState(() {});
     });
-    _controller.setLooping(true);
-    _controller.initialize();
     _chewieController = ChewieController(
       videoPlayerController: VideoPlayerController.file(
         File(widget.videoPath),
@@ -55,8 +54,7 @@ class _VideoViewState extends State<VideoView>
       allowFullScreen: true,
       allowMuting: true,
       autoInitialize: true,
-      autoPlay: false,
-      looping: false,
+      showControlsOnInitialize: true,
       allowPlaybackSpeedChanging: true,
       errorBuilder: (context, errorMessage) {
         return Dialog(
@@ -67,22 +65,23 @@ class _VideoViewState extends State<VideoView>
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
       ],
+      showOptions: false,
     );
     _chewieController!.addListener(
       () {
         if (!_chewieController!.isFullScreen) {
           SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+          setState(() {});
         }
-        if (!_chewieController!.isPlaying) {}
       },
     );
-    _loadInterstitialAd();
     _chewieController!.autoInitialize;
+    _controller.initialize();
   }
 
   InterstitialAd? _interstitialAd;
 
-  void _loadInterstitialAd() {
+  void loadInterstitialAd() {
     InterstitialAd.load(
       adUnitId: AdState.interstitialAdUnitId,
       request: const AdRequest(),
@@ -90,7 +89,7 @@ class _VideoViewState extends State<VideoView>
         onAdLoaded: (ad) {
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
-              _loadInterstitialAd();
+              loadInterstitialAd();
             },
           );
           setState(() {
@@ -102,6 +101,10 @@ class _VideoViewState extends State<VideoView>
         },
       ),
     );
+  }
+
+  Future<File> localFile() async {
+    return File(widget.videoPath);
   }
 
   @override
@@ -186,7 +189,7 @@ class _VideoViewState extends State<VideoView>
                                 ),
                                 onPressed: () {
                                   // if (_interstitialAd == null) {
-                                  //   _loadInterstitialAd();
+                                  //   loadInterstitialAd();
                                   // }
                                   Navigator.of(context).pop();
                                   ScaffoldMessenger.of(context)
@@ -274,7 +277,41 @@ class _VideoViewState extends State<VideoView>
               icon: Icons.delete,
               titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
               onPress: () {
-                _animationController!.reverse();
+                localFile().then(
+                  (value) async {
+                    try {
+                      await value.delete();
+                      print('Video deleted');
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
+                ).then(
+                  (value) {
+                    _animationController!.reverse();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                        ),
+                        duration: Duration(milliseconds: 700),
+                        backgroundColor: Colors.red,
+                        content: Text(
+                          'Image Deleted',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                    );
+                    statusProvider.removeVideo(widget.videoPath);
+                  },
+                ).then((value) {
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  Navigator.of(context).pop();
+                });
               },
             ),
           ],

@@ -68,6 +68,10 @@ class _ImagePageViewState extends State<ImagePageView>
       context,
       listen: false,
     ).imageSaved = false;
+    imagePath = Provider.of<GetStatusProvider>(
+      context,
+      listen: false,
+    ).getImages[widget.imageIndex].status.path;
   }
 
   void _loadInterstitialAd() {
@@ -91,6 +95,10 @@ class _ImagePageViewState extends State<ImagePageView>
         },
       ),
     );
+  }
+
+  Future<File> localFile() async {
+    return File('$imagePath');
   }
 
   @override
@@ -149,7 +157,7 @@ class _ImagePageViewState extends State<ImagePageView>
                   context: context,
                   builder: (context) => Dialog(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(5),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -160,7 +168,7 @@ class _ImagePageViewState extends State<ImagePageView>
                             padding: EdgeInsets.all(20.0),
                             child: Text(
                               'Image will be saved to gallery',
-                              style: TextStyle(fontSize: 18),
+                              style: TextStyle(fontSize: 16),
                             ),
                           ),
                           Row(
@@ -245,9 +253,8 @@ class _ImagePageViewState extends State<ImagePageView>
                 if (_interstitialAd != null) {
                   _interstitialAd?.show();
                 }
-                statusProvider.shareImage(imagePath).then((value) {
-                  _animationController!.reverse();
-                });
+                _animationController!.reverse();
+                statusProvider.shareImage(imagePath).then((value) {});
               },
             ),
             Bubble(
@@ -274,7 +281,37 @@ class _ImagePageViewState extends State<ImagePageView>
               icon: Icons.delete,
               titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
               onPress: () {
-                _animationController!.reverse();
+                localFile().then(
+                  (value) async {
+                    try {
+                      await value.delete();
+                      print('delete');
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
+                ).then(
+                  (value) {
+                    _animationController!.reverse();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                        ),
+                        duration: Duration(milliseconds: 700),
+                        backgroundColor: Colors.red,
+                        content: Text(
+                          'Image Deleted',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                    );
+                  },
+                );
+                statusProvider.removeImage(imagePath);
               },
             ),
           ],

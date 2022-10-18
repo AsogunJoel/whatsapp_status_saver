@@ -47,6 +47,7 @@ dependencies:
   video_thumbnail: ^0.5.3
   flutter_native_splash: ^2.2.10+1
   google_mobile_ads: ^2.0.1
+  webview_flutter: ^3.0.4
   # export_video_frame: ^0.0.7
 
 dev_dependencies:
@@ -63,7 +64,7 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/logo2.png"
+  image_path: "assets/images/22.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   web:
     generate: false
@@ -88,7 +89,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/
     - assets/images/
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -137,7 +140,7 @@ flutter_native_splash:
 
   # The image parameter allows you to specify an image used in the splash screen.  It must be a
   # png file and should be sized for 4x pixel density.
-  image: assets/images/logo2.png
+  image: assets/images/22.png
 
   # The branding property allows you to specify an image used as branding in the splash screen.
   # It must be a png file. It is supported for Android, iOS and the Web.  For Android 12,

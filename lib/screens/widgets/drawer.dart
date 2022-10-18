@@ -13,21 +13,41 @@ class _HomeDrawerState extends State<HomeDrawer> {
     return Drawer(
       child: ListView(
         children: [
-          AppBar(
-            elevation: 0,
-            title: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'WhatsApp Saver',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 25,
-                  letterSpacing: .4,
-                ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 25.0,
+              // left: 20,
+              // right: 10,
+              bottom: 5,
+            ),
+            child: Container(
+              margin: const EdgeInsets.only(top: 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: const [
+                      Expanded(
+                        child: Text(
+                          'Whatsapp Status Saver',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 30,
+                            letterSpacing: .4,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    color: Colors.green,
+                    endIndent: 20,
+                    indent: 20,
+                    thickness: 2,
+                  ),
+                ],
               ),
             ),
-            automaticallyImplyLeading: false,
-            toolbarHeight: 100,
           ),
           ListTile(
             leading: const Icon(Icons.share),

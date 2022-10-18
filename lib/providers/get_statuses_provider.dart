@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_native_api/flutter_native_api.dart';
@@ -7,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_status_saver/constants/constants.dart';
 import 'package:whatsapp_status_saver/directory_response/check_directory_response.dart';
 import 'package:whatsapp_status_saver/models/status_model.dart';
+import 'package:whatsapp_status_saver/utils/get_thumbails.dart';
 
 class GetStatusProvider with ChangeNotifier {
   List<StatusModel> _getImages = [];
@@ -92,11 +94,12 @@ class GetStatusProvider with ChangeNotifier {
             ..sort(
               (l, r) => l.time.compareTo(r.time),
             );
-          _getVideosss = items
-              .where(
-                (element) => element.status.path.contains('.mp4'),
-              )
-              .toList()
+          _getVideosss = items.where((element) {
+            getThumbnail(element.status.path).then((value) {
+              element.thumbnail = value;
+            });
+            return element.status.path.contains('.mp4');
+          }).toList()
             ..sort(
               (l, r) => l.time.compareTo(r.time),
             );
@@ -344,27 +347,45 @@ class GetStatusProvider with ChangeNotifier {
     }
   }
 
+  removeImage(imagePath) {
+    _getImages.removeWhere((element) => element.status.path == imagePath);
+    notifyListeners();
+  }
+
+  removeVideo(videoPath) {
+    _getVideos.removeWhere((element) => element.status.path == videoPath);
+    notifyListeners();
+  }
+
   bool imageSaved = false;
   resetimageSaved() {
     imageSaved = false;
   }
 
   Future<dynamic> saveImagetoGallery(imagePath) async {
-    await ImageGallerySaver.saveFile(imagePath);
+    loading = true;
+    await ImageGallerySaver.saveFile(imagePath).then((value) {
+      print(value);
+      // filePath: content://media/external/images/media/531982
+    });
     imageSaved = true;
+    loading = false;
     notifyListeners();
   }
 
-  bool shareloading = false;
+  bool loading = false;
   Future<dynamic> shareImage(imagePath) async {
-    shareloading = true;
+    loading = true;
     await FlutterNativeApi.shareImage(imagePath);
-    shareloading = false;
+    loading = false;
     notifyListeners();
   }
 
   Future<dynamic> printImage(imagePath, imagePathTitle) async {
+    loading = true;
     await FlutterNativeApi.printImage(imagePath, imagePathTitle);
+    loading = false;
+    notifyListeners();
   }
 }
 

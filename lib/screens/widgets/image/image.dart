@@ -20,6 +20,12 @@ class WhatsappImagePage extends StatefulWidget {
 class _WhatsappImagePageState extends State<WhatsappImagePage> {
   BannerAd? _bannerAd;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   setState(() {});
+  // }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -50,7 +56,6 @@ class _WhatsappImagePageState extends State<WhatsappImagePage> {
       List<StatusModel> statuses, String imageName) async {
     int index =
         statuses.indexWhere((element) => element.status.path == imageName);
-
     return index;
   }
 
@@ -80,7 +85,7 @@ class _WhatsappImagePageState extends State<WhatsappImagePage> {
                       mainAxisSpacing: 5,
                       childAspectRatio: 2.5 / 3,
                     ),
-                    addAutomaticKeepAlives: true,
+                    // addAutomaticKeepAlives: true,
                     padding: const EdgeInsets.all(8),
                     itemCount: file.getImages.length,
                     itemBuilder: (context, index) {
