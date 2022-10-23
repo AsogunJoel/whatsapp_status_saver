@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.5+1
 
 environment:
   sdk: '>=2.18.1 <3.0.0'
@@ -36,9 +36,8 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  permission_handler: ^10.0.2
+  # permission_handler: ^10.0.2
   video_player: ^2.4.7
-  chewie: ^1.3.5
   share_plus: ^4.4.0
   provider: ^6.0.3
   floating_action_bubble: ^1.1.4
@@ -49,6 +48,7 @@ dependencies:
   google_mobile_ads: ^2.0.1
   webview_flutter: ^3.0.4
   flutter_dotenv: ^5.0.2
+  saf: ^1.0.3+3
   # export_video_frame: ^0.0.7
 
 dev_dependencies:
@@ -65,13 +65,13 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/22.png"
+  image_path: "assets/images/3-removebg-preview.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   web:
     generate: false
     image_path: "path/to/image.png"
-    background_color: "#hexcode"
-    theme_color: "#hexcode"
+    background_color: "#FFFFFF"
+    theme_color: "#FFFFFF"
   windows:
     generate: false
     image_path: "path/to/image.png"

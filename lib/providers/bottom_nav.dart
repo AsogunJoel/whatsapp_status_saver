@@ -32,10 +32,8 @@ class BottomNavProvider with ChangeNotifier {
   }
 
   changePageIndex(int value) {
-    controller.animateToPage(
+    controller.jumpToPage(
       value,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeIn,
     );
     _currentIndex = value;
     notifyListeners();

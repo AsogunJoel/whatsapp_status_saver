@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/providers/bottom_nav.dart';
 import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
-import 'package:whatsapp_status_saver/screens/widgets/image/image.dart';
-import 'package:whatsapp_status_saver/screens/widgets/videos/videos.dart';
+import 'package:whatsapp_status_saver/screens/whatsapp/widgets/image/image.dart';
+import 'package:whatsapp_status_saver/screens/whatsapp/widgets/videos/videos.dart';
 
 class WhatsAppHomePage extends StatefulWidget {
   const WhatsAppHomePage({super.key});
@@ -20,6 +20,12 @@ class _WhatsAppHomeState extends State<WhatsAppHomePage> {
       context,
       listen: false,
     ).initializerWhatsapp(ctx: context);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -66,7 +72,7 @@ class _WhatsAppHomeState extends State<WhatsAppHomePage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            value.getWhatsappStatus(ctx: context);
+            value.refreshpaths(context);
           },
           child: const Icon(Icons.refresh),
         ),

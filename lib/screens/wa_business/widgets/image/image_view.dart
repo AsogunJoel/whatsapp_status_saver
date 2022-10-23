@@ -5,44 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/providers/adstate.dart';
+import 'package:whatsapp_status_saver/providers/gb_provider.dart';
 import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
+import 'package:whatsapp_status_saver/screens/widgets/image/single_page_image.dart';
 
-class ImageView extends StatelessWidget {
-  const ImageView({
-    super.key,
-    required this.imagePath,
-  });
-  final String imagePath;
+import '../../../../providers/business_provider.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      child: Image.file(
-        File(
-          imagePath,
-        ),
-        errorBuilder: (context, error, stackTrace) => const Center(
-          child: Text(
-            'Unavailable, please refresh',
-            textAlign: TextAlign.center,
-          ),
-        ),
-        fit: BoxFit.contain,
-      ),
-    );
-  }
-}
-
-class ImagePageView extends StatefulWidget {
-  const ImagePageView({super.key, required this.imageIndex});
+class BusinessImagePageView extends StatefulWidget {
+  const BusinessImagePageView({super.key, required this.imageIndex});
   final int imageIndex;
   @override
-  State<ImagePageView> createState() => _ImagePageViewState();
+  State<BusinessImagePageView> createState() => _BusinessImagePageViewState();
 }
 
-class _ImagePageViewState extends State<ImagePageView>
+class _BusinessImagePageViewState extends State<BusinessImagePageView>
     with SingleTickerProviderStateMixin {
   Animation<double>? _animation;
   AnimationController? _animationController;
@@ -64,14 +40,14 @@ class _ImagePageViewState extends State<ImagePageView>
     );
     _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
     _loadInterstitialAd();
-    Provider.of<GetStatusProvider>(
+    Provider.of<GBStatusProvider>(
       context,
       listen: false,
     ).imageSaved = false;
-    imagePath = Provider.of<GetStatusProvider>(
+    imagePath = Provider.of<BusinessStatusProvider>(
       context,
       listen: false,
-    ).getImages[widget.imageIndex].status.path;
+    ).businessgetImages[widget.imageIndex].status.path;
   }
 
   void _loadInterstitialAd() {
@@ -120,23 +96,22 @@ class _ImagePageViewState extends State<ImagePageView>
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Consumer<GetStatusProvider>(
-        builder: (context, file, child) {
+      body: Consumer<BusinessStatusProvider>(
+        builder: (context, yoFile, child) {
           return PageView.builder(
             controller: _pageController,
-            itemCount: file.getImages.length,
+            itemCount: yoFile.businessgetImages.length,
             itemBuilder: (context, index) {
-              return ImageView(
-                imagePath: file.getImages[index].status.path,
+              return SinglePageImage(
+                filePath: yoFile.businessgetImages[index].status.path,
               );
             },
             onPageChanged: (value) {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               setState(() {
-                imagePath = file.getImages[value].status.path;
+                imagePath = yoFile.businessgetImages[value].status.path;
                 pagenumber = value;
               });
-              file.resetimageSaved();
               _animationController!.reverse();
               if (_interstitialAd == null) {
                 _loadInterstitialAd();
@@ -273,46 +248,6 @@ class _ImagePageViewState extends State<ImagePageView>
                 statusProvider.printImage(
                   imagePath,
                   imagePath!.split('/').last,
-                );
-              },
-            ),
-            Bubble(
-              title: "Delete",
-              iconColor: Colors.white,
-              bubbleColor: Colors.red,
-              icon: Icons.delete,
-              titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
-              onPress: () {
-                localFile().then(
-                  (value) async {
-                    try {
-                      await value.delete();
-                      print('delete');
-                    } catch (e) {
-                      print(e);
-                    }
-                  },
-                ).then(
-                  (value) {
-                    _animationController!.reverse();
-                    statusProvider.removeImage(imagePath);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(10),
-                          ),
-                        ),
-                        duration: Duration(milliseconds: 700),
-                        backgroundColor: Colors.red,
-                        content: Text(
-                          'Image Deleted',
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      ),
-                    );
-                  },
                 );
               },
             ),

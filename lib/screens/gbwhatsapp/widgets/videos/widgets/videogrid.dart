@@ -1,25 +1,22 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/directory_response/check_directory_response.dart';
-import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
+import 'package:whatsapp_status_saver/providers/gb_provider.dart';
+import 'package:whatsapp_status_saver/providers/yowhatsapp_provider.dart';
+import 'package:whatsapp_status_saver/screens/widgets/videos/single_video.dart';
 import 'package:whatsapp_status_saver/screens/widgets/videos/video_view.dart';
-import 'package:whatsapp_status_saver/screens/widgets/videos/videos.dart';
-import 'package:whatsapp_status_saver/utils/get_thumbails.dart';
 
-class VideoGrid extends StatefulWidget {
-  const VideoGrid({
+class GBVideoGrid extends StatefulWidget {
+  const GBVideoGrid({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<VideoGrid> createState() => _VideoGridState();
+  State<GBVideoGrid> createState() => _YoVideoGridState();
 }
 
-class _VideoGridState extends State<VideoGrid>
+class _YoVideoGridState extends State<GBVideoGrid>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -28,10 +25,10 @@ class _VideoGridState extends State<VideoGrid>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return Consumer<GetStatusProvider>(
+    return Consumer<GBStatusProvider>(
       builder: (context, file, child) {
         if (file.itemsData.status == Status.COMPLETED &&
-            file.getVideos.isNotEmpty) {
+            file.gbgetVideos.isNotEmpty) {
           return GridView.builder(
             physics: const BouncingScrollPhysics(),
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -41,15 +38,15 @@ class _VideoGridState extends State<VideoGrid>
               childAspectRatio: 2.5 / 3,
             ),
             padding: const EdgeInsets.all(8),
-            itemCount: file.getVideos.length,
+            itemCount: file.gbgetVideos.length,
             itemBuilder: (context, index) {
-              String pathhh = file.getVideos[index].status.path;
+              String pathhh = file.gbgetVideos[index].status.path;
               return GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(
                     CupertinoPageRoute(
                       builder: (context) => VideoView(
-                          videoPath: file.getVideos[index].status.path),
+                          videoPath: file.gbgetVideos[index].status.path),
                     ),
                   );
                 },
@@ -75,10 +72,22 @@ class _VideoGridState extends State<VideoGrid>
             ),
           );
         } else if (file.itemsData.status == Status.LOADING) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                CircularProgressIndicator(),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Please wait...',
+                    style: TextStyle(fontSize: 15),
+                  ),
+                )
+              ],
+            ),
           );
-        } else if (file.getVideos.isEmpty) {
+        } else if (file.gbgetVideos.isEmpty) {
           return const Center(
             child: Text(
               'No recently viewed videos',
@@ -99,70 +108,6 @@ class _VideoGridState extends State<VideoGrid>
                 fontSize: 15,
               ),
             ),
-          );
-        }
-      },
-    );
-  }
-}
-
-class SingleVideo extends StatefulWidget {
-  const SingleVideo({
-    Key? key,
-    this.file,
-  }) : super(key: key);
-  final String? file;
-
-  @override
-  State<SingleVideo> createState() => _SingleVideoState();
-}
-
-class _SingleVideoState extends State<SingleVideo>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return FutureBuilder(
-      future: getThumbnail(widget.file),
-      builder: (context, snapshot) {
-        if (snapshot.hasData &&
-            snapshot.connectionState == ConnectionState.done) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.file(
-              File(
-                snapshot.data!,
-              ),
-              errorBuilder: (context, error, stackTrace) => const Center(
-                child: Text(
-                  'Unavailable',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              fit: BoxFit.cover,
-            ),
-          );
-        } else if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Padding(
-            padding: EdgeInsets.all(30.0),
-            child: SizedBox(
-              child: FittedBox(
-                child: Padding(
-                  padding: EdgeInsets.all(15.0),
-                  child: CircularProgressIndicator.adaptive(
-                    strokeWidth: 2,
-                  ),
-                ),
-              ),
-            ),
-          );
-        } else {
-          return const Text(
-            'Unavailable, please refresh',
-            textAlign: TextAlign.center,
           );
         }
       },

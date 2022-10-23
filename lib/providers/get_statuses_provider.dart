@@ -1,14 +1,14 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_native_api/flutter_native_api.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:whatsapp_status_saver/constants/constants.dart';
-import 'package:whatsapp_status_saver/directory_response/check_directory_response.dart';
-import 'package:whatsapp_status_saver/models/status_model.dart';
-import 'package:whatsapp_status_saver/utils/get_thumbails.dart';
+import 'package:saf/saf.dart';
+
+import '../constants/constants.dart';
+import '../directory_response/check_directory_response.dart';
+import '../models/status_model.dart';
 
 class GetStatusProvider with ChangeNotifier {
   List<StatusModel> _getImages = [];
@@ -16,7 +16,6 @@ class GetStatusProvider with ChangeNotifier {
   List<StatusModel> _getVideos = [];
   List<StatusModel> _getVideosss = [];
   PermissionStatus? status;
-  PermissionStatus? status2;
   List<StatusModel> items = [];
 
   List<StatusModel> get getImages {
@@ -27,133 +26,63 @@ class GetStatusProvider with ChangeNotifier {
     return _getVideos;
   }
 
+  bool? isGranted;
+  Saf? saf;
+  Directory? directory;
+
   initializerWhatsapp({ctx}) async {
+    directory = Directory(AppConstants.WhatsppPath);
+    if (directory!.existsSync()) {
+      saf = Saf(AppConstants.safWhatsppPath);
+      isGranted = await saf!.getDirectoryPermission(isDynamic: false);
+    }
     status = await Permission.storage.request();
-    status2 = await Permission.manageExternalStorage.request();
-    getWhatsappStatus(ctx: ctx);
-  }
-
-  initializerWABusiness({ctx}) async {
-    status = await Permission.storage.request();
-    status2 = await Permission.manageExternalStorage.request();
-    getWABusinessStatus(ctx: ctx);
-  }
-
-  initializerGB({ctx}) async {
-    status = await Permission.storage.request();
-    status2 = await Permission.manageExternalStorage.request();
-    getGBWhatsappStatus(ctx: ctx);
-  }
-
-  initializerYowhatsapp({ctx}) async {
-    status = await Permission.storage.request();
-    status2 = await Permission.manageExternalStorage.request();
     Future.delayed(
       const Duration(milliseconds: 500),
     ).then(
       (value) {
-        getYoWhatAppStatus(ctx: ctx);
+        getWhatsappStatus(ctx: ctx);
       },
     );
+    notifyListeners();
   }
 
   initializer({ctx}) async {
-    status = await Permission.storage.request();
-    status2 = await Permission.manageExternalStorage.request();
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
+    print(statuses[Permission.storage]);
   }
 
   clearData() {
     _itemsData = DirectoryResponse.loading('loading... ');
     items.clear();
-    _getImagesss.clear();
-    _getVideosss.clear();
-    _getImages.clear();
-    _getVideos.clear();
-    notifyListeners();
+    if (_getImagesss.isNotEmpty) {
+      _getImagesss.clear();
+    }
+    if (_getVideosss.isNotEmpty) {
+      _getVideosss.clear();
+    }
+    if (_getImages.isNotEmpty) {
+      _getImages.clear();
+    }
+    if (_getVideos.isNotEmpty) {
+      _getVideos.clear();
+    }
   }
 
   late DirectoryResponse<List<StatusModel>> _itemsData =
       DirectoryResponse.loading('');
 
   DirectoryResponse<List<StatusModel>> get itemsData => _itemsData;
-  Future<void> getYoWhatAppStatus({ctx}) async {
-    if (status!.isDenied && status2!.isDenied) {
-      initializer();
-    }
-    if (status!.isGranted || status2!.isGranted) {
+  Future<void> getWhatsappStatus({ctx}) async {
+    if (directory!.existsSync()) {
       _itemsData = DirectoryResponse.loading('loading... ');
-      final directory = Directory(AppConstants.YowhatsppPath);
-      if (directory.existsSync()) {
+      final anodir = Directory(AppConstants.whatsappMyStatPath);
+      if (status!.isGranted && isGranted != null && isGranted!) {
+        await saf!.cache();
         try {
-          clearData();
-          items = directory
-              .listSync()
-              .map(
-                (e) => StatusModel.fromRTDB(e),
-              )
-              .toList();
-          _getImagesss = items
-              .where(
-                (element) => element.status.path.endsWith('.jpg'),
-              )
-              .toList()
-            ..sort(
-              (l, r) => l.time.compareTo(r.time),
-            );
-          _getVideosss = items.where((element) {
-            return element.status.path.contains('.mp4');
-          }).toList()
-            ..sort(
-              (l, r) => l.time.compareTo(r.time),
-            );
-          _getVideos = _getVideosss.reversed.toList();
-          _getImages = _getImagesss.reversed.toList();
-          _itemsData = DirectoryResponse.completed(items);
-          notifyListeners();
-        } catch (e) {
-          _itemsData = DirectoryResponse.error(
-            e.toString(),
-          );
-        }
-      } else {
-        _itemsData = DirectoryResponse.error(
-          'Something went wrong,\nYoWhatsapp not installed',
-        );
-        notifyListeners();
-        showDialog(
-          context: ctx,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('YoWhatsapp not installed'),
-              content: const Text(
-                'YoWhatsapp doesn\'t seem to be installed on your device.',
-              ),
-              actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('ok'),
-                )
-              ],
-            );
-          },
-        );
-      }
-    }
-  }
-
-  void getWhatsappStatus({ctx}) async {
-    if (status!.isDenied || status2!.isDenied) {
-      initializer();
-    }
-    if (status!.isGranted || status2!.isGranted) {
-      _itemsData = DirectoryResponse.loading('loading... ');
-      final directory = Directory(AppConstants.WhatsppPath);
-      if (directory.existsSync()) {
-        try {
-          clearData();
-          items = directory
+          items = anodir
               .listSync()
               .map(
                 (e) => StatusModel.fromRTDB(e),
@@ -184,169 +113,65 @@ class GetStatusProvider with ChangeNotifier {
             e.toString(),
           );
         }
-      } else {
+      } else if (isGranted != null && !isGranted!) {
         _itemsData = DirectoryResponse.error(
-          'Something went wrong,\nWhatsapp not installed',
+          'Allow permissions to view statuses',
         );
-        notifyListeners();
         showDialog(
           context: ctx,
           builder: (context) {
             return AlertDialog(
-              title: const Text('WhatsApp not installed'),
+              title: const Text('Permissions manager'),
               content: const Text(
-                'WhatsApp doesn\'t seem to be installed on your device.',
+                'Allow WhatsApp Status Saver to access statuses.',
               ),
               actions: [
                 ElevatedButton(
                   onPressed: () {
+                    initializerWhatsapp();
                     Navigator.of(context).pop();
                   },
-                  child: const Text('ok'),
+                  child: const Text('Allow'),
                 )
               ],
             );
           },
         );
+        notifyListeners();
+      } else if (status!.isDenied) {
+        _itemsData = DirectoryResponse.error(
+          'Acccept permissions to view statuses',
+        );
+        status = await Permission.storage.request();
+        notifyListeners();
+      } else if (status!.isRestricted) {
+      } else if (status!.isPermanentlyDenied) {
+        openAppSettings();
       }
-    }
-  }
-
-  void getWABusinessStatus({ctx}) async {
-    _itemsData = DirectoryResponse.loading('loading... ');
-    if (status!.isDenied || status2!.isDenied) {
-      initializerWABusiness();
-    }
-    if (status!.isGranted || status2!.isGranted) {
-      final directory = Directory(AppConstants.BWhatsppPath);
-      if (directory.existsSync()) {
-        try {
-          clearData();
-          items = directory
-              .listSync()
-              .map(
-                (e) => StatusModel.fromRTDB(e),
+    } else {
+      _itemsData = DirectoryResponse.error(
+        'Something went wrong,\nWhatsapp not installed',
+      );
+      notifyListeners();
+      showDialog(
+        context: ctx,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('WhatsApp not installed'),
+            content: const Text(
+              'WhatsApp doesn\'t seem to be installed on your device.',
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('ok'),
               )
-              .toList();
-          _getImagesss = items
-              .where(
-                (element) => element.status.path.endsWith('.jpg'),
-              )
-              .toList()
-            ..sort(
-              (l, r) => l.time.compareTo(r.time),
-            );
-          _getVideosss = items
-              .where(
-                (element) => element.status.path.contains('.mp4'),
-              )
-              .toList()
-            ..sort(
-              (l, r) => l.time.compareTo(r.time),
-            );
-          _getVideos = _getVideosss.reversed.toList();
-          _getImages = _getImagesss.reversed.toList();
-          _itemsData = DirectoryResponse.completed(items);
-          notifyListeners();
-        } catch (e) {
-          _itemsData = DirectoryResponse.error(
-            e.toString(),
+            ],
           );
-        }
-      } else {
-        _itemsData = DirectoryResponse.error(
-          'Something went wrong,\nBusiness Whatsapp not installed',
-        );
-        notifyListeners();
-        showDialog(
-          context: ctx,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Business WhatsApp not installed'),
-              content: const Text(
-                'Business WhatsApp doesn\'t seem to be installed on your device.',
-              ),
-              actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('ok'),
-                )
-              ],
-            );
-          },
-        );
-      }
-    }
-  }
-
-  void getGBWhatsappStatus({ctx}) async {
-    _itemsData = DirectoryResponse.loading('loading... ');
-    if (status!.isDenied || status2!.isDenied) {
-      initializerWABusiness();
-    }
-    if (status!.isGranted || status2!.isGranted) {
-      final directory = Directory(AppConstants.GBWhatsppPath);
-      if (directory.existsSync()) {
-        try {
-          clearData();
-          items = directory
-              .listSync()
-              .map(
-                (e) => StatusModel.fromRTDB(e),
-              )
-              .toList();
-          _getImagesss = items
-              .where(
-                (element) => element.status.path.endsWith('.jpg'),
-              )
-              .toList()
-            ..sort(
-              (l, r) => l.time.compareTo(r.time),
-            );
-          _getVideosss = items
-              .where(
-                (element) => element.status.path.contains('.mp4'),
-              )
-              .toList()
-            ..sort(
-              (l, r) => l.time.compareTo(r.time),
-            );
-          _getVideos = _getVideosss.reversed.toList();
-          _getImages = _getImagesss.reversed.toList();
-          _itemsData = DirectoryResponse.completed(items);
-          notifyListeners();
-        } catch (e) {
-          _itemsData = DirectoryResponse.error(
-            e.toString(),
-          );
-        }
-      } else {
-        _itemsData = DirectoryResponse.error(
-          'Something went wrong,\nGB whatsApp not installed',
-        );
-        notifyListeners();
-        showDialog(
-          context: ctx,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('GB whatsApp not installed'),
-              content: const Text(
-                'GB whatsApp doesn\'t seem to be installed on your device.',
-              ),
-              actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('ok'),
-                )
-              ],
-            );
-          },
-        );
-      }
+        },
+      );
     }
   }
 
@@ -356,26 +181,37 @@ class GetStatusProvider with ChangeNotifier {
     return index;
   }
 
-  removeImage(imagePath) {
-    _getImages.removeWhere((element) => element.status.path == imagePath);
-    notifyListeners();
-  }
-
-  removeVideo(videoPath) {
-    _getVideos.removeWhere((element) => element.status.path == videoPath);
-    notifyListeners();
-  }
-
   bool imageSaved = false;
   resetimageSaved() {
     imageSaved = false;
+  }
+
+  Future<void> refreshpaths(context) async {
+    getWhatsappStatus().then(
+      (value) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+            ),
+            backgroundColor: Colors.green,
+            content: Text('Statuses refreshed'),
+          ),
+        );
+      },
+    );
+    ;
+    notifyListeners();
   }
 
   Future<dynamic> saveImagetoGallery(imagePath) async {
     loading = true;
     await ImageGallerySaver.saveFile(imagePath).then((value) {
       print(value);
-      // filePath: content://media/external/images/media/531982
     });
     imageSaved = true;
     loading = false;
@@ -397,73 +233,3 @@ class GetStatusProvider with ChangeNotifier {
     notifyListeners();
   }
 }
-
-
-// Future<void> getYoWhatAppStatus({ctx}) async {
-//     if (status!.isDenied && status2!.isDenied) {
-//       initializer();
-//     }
-//     if (status!.isGranted || status2!.isGranted) {
-//       _itemsData = DirectoryResponse.loading('loading... ');
-//       final directory = Directory(AppConstants.YowhatsppPath);
-//       if (directory.existsSync()) {
-//         try {
-//           clearData();
-//           items = directory
-//               .listSync()
-//               .map(
-//                 (e) => StatusModel.fromRTDB(e),
-//               )
-//               .toList();
-//           _getImagesss = items
-//               .where(
-//                 (element) => element.status.path.endsWith('.jpg'),
-//               )
-//               .toList()
-//             ..sort(
-//               (l, r) => l.time.compareTo(r.time),
-//             );
-//           _getVideosss = items
-//               .where(
-//                 (element) => element.status.path.contains('.mp4'),
-//               )
-//               .toList()
-//             ..sort(
-//               (l, r) => l.time.compareTo(r.time),
-//             );
-//           _getVideos = _getVideosss.reversed.toList();
-//           _getImages = _getImagesss.reversed.toList();
-//           _itemsData = DirectoryResponse.completed(items);
-//           notifyListeners();
-//         } catch (e) {
-//           _itemsData = DirectoryResponse.error(
-//             e.toString(),
-//           );
-//         }
-//       } else {
-//         _itemsData = DirectoryResponse.error(
-//           'Something went wrong,\nYoWhatsapp not installed',
-//         );
-//         notifyListeners();
-//         showDialog(
-//           context: ctx,
-//           builder: (context) {
-//             return AlertDialog(
-//               title: const Text('YoWhatsapp not installed'),
-//               content: const Text(
-//                 'YoWhatsapp doesn\'t seem to be installed on your device.',
-//               ),
-//               actions: [
-//                 ElevatedButton(
-//                   onPressed: () {
-//                     Navigator.of(context).pop();
-//                   },
-//                   child: const Text('ok'),
-//                 )
-//               ],
-//             );
-//           },
-//         );
-//       }
-//     }
-//   }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/providers/bottom_nav.dart';
+import 'package:whatsapp_status_saver/providers/gb_provider.dart';
 import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
-import 'package:whatsapp_status_saver/screens/widgets/image/image.dart';
-import 'package:whatsapp_status_saver/screens/widgets/videos/videos.dart';
+import 'package:whatsapp_status_saver/screens/gbwhatsapp/widgets/image/image.dart';
+import 'package:whatsapp_status_saver/screens/gbwhatsapp/widgets/videos/videos.dart';
 
 class GBWhatsappHomePage extends StatefulWidget {
   const GBWhatsappHomePage({super.key});
@@ -16,15 +17,24 @@ class _GBWhatsappHomePage extends State<GBWhatsappHomePage> {
   @override
   void initState() {
     super.initState();
-    Provider.of<GetStatusProvider>(
+    Provider.of<GBStatusProvider>(
       context,
       listen: false,
     ).initializerGB(ctx: context);
   }
 
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   Provider.of<GBStatusProvider>(
+  //     context,
+  //     listen: false,
+  //   ).clearSafs();
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer2<BottomNavProvider, GetStatusProvider>(
+    return Consumer2<BottomNavProvider, GBStatusProvider>(
       builder: (context, navProvider, value, child) => Scaffold(
         appBar: AppBar(
           title: const Text('GB Whatsapp'),
@@ -34,8 +44,8 @@ class _GBWhatsappHomePage extends State<GBWhatsappHomePage> {
           physics: const NeverScrollableScrollPhysics(),
           controller: navProvider.controller,
           children: const [
-            WhatsappImagePage(),
-            WhatsappVideoPage(),
+            GBWhatsappImagePage(),
+            GBWhatsappVideoPage(),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -66,7 +76,7 @@ class _GBWhatsappHomePage extends State<GBWhatsappHomePage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            value.getGBWhatsappStatus(ctx: context);
+            value.refreshpaths(context);
           },
           child: const Icon(Icons.refresh),
         ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/providers/bottom_nav.dart';
-import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
-import 'package:whatsapp_status_saver/screens/widgets/image/image.dart';
-import 'package:whatsapp_status_saver/screens/widgets/videos/videos.dart';
+import 'package:whatsapp_status_saver/providers/business_provider.dart';
+import 'package:whatsapp_status_saver/screens/wa_business/widgets/image/image.dart';
+import 'package:whatsapp_status_saver/screens/wa_business/widgets/videos/videos.dart';
 
 class WABusinessHomePage extends StatefulWidget {
   const WABusinessHomePage({super.key});
@@ -16,7 +16,7 @@ class _WABusinessHomePage extends State<WABusinessHomePage> {
   @override
   void initState() {
     super.initState();
-    Provider.of<GetStatusProvider>(
+    Provider.of<BusinessStatusProvider>(
       context,
       listen: false,
     ).initializerWABusiness(ctx: context);
@@ -24,18 +24,18 @@ class _WABusinessHomePage extends State<WABusinessHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<BottomNavProvider, GetStatusProvider>(
+    return Consumer2<BottomNavProvider, BusinessStatusProvider>(
       builder: (context, navProvider, value, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('WA Business'),
+          title: const Text('Whatsapp Business'),
           centerTitle: true,
         ),
         body: PageView(
           physics: const NeverScrollableScrollPhysics(),
           controller: navProvider.controller,
           children: const [
-            WhatsappImagePage(),
-            WhatsappVideoPage(),
+            BusinessWhatsappImagePage(),
+            BusinessWhatsappVideoPage(),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -66,7 +66,7 @@ class _WABusinessHomePage extends State<WABusinessHomePage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            value.getWhatsappStatus(ctx: context);
+            value.refreshpaths(context);
           },
           child: const Icon(Icons.refresh),
         ),

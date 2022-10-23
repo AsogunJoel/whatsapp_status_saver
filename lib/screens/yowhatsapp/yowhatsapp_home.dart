@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/providers/bottom_nav.dart';
-import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
-import 'package:whatsapp_status_saver/screens/widgets/image/image.dart';
-import 'package:whatsapp_status_saver/screens/widgets/videos/videos.dart';
+import 'package:whatsapp_status_saver/providers/yowhatsapp_provider.dart';
+import 'package:whatsapp_status_saver/screens/yowhatsapp/widgets/image/image.dart';
+import 'package:whatsapp_status_saver/screens/yowhatsapp/widgets/videos/videos.dart';
 
 class YoWhatsAppHomePage extends StatefulWidget {
   const YoWhatsAppHomePage({super.key});
@@ -16,15 +16,24 @@ class _YoWhatsAppState extends State<YoWhatsAppHomePage> {
   @override
   void initState() {
     super.initState();
-    Provider.of<GetStatusProvider>(
+    Provider.of<GetYoStatusProvider>(
       context,
       listen: false,
     ).initializerYowhatsapp(ctx: context);
   }
 
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   Provider.of<GetYoStatusProvider>(
+  //     context,
+  //     listen: false,
+  //   ).clearData();
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer2<BottomNavProvider, GetStatusProvider>(
+    return Consumer2<BottomNavProvider, GetYoStatusProvider>(
       builder: (context, navProvider, value, child) => Scaffold(
         appBar: AppBar(
           title: const Text('YoWhatsapp'),
@@ -34,8 +43,8 @@ class _YoWhatsAppState extends State<YoWhatsAppHomePage> {
           physics: const NeverScrollableScrollPhysics(),
           controller: navProvider.controller,
           children: const [
-            WhatsappImagePage(),
-            WhatsappVideoPage(),
+            YoWhatsappImagePage(),
+            YoWhatsappVideoPage(),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -66,22 +75,7 @@ class _YoWhatsAppState extends State<YoWhatsAppHomePage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            value.getYoWhatAppStatus(ctx: context).then(
-              (value) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                      ),
-                    ),
-                    backgroundColor: Colors.green,
-                    content: Text('Statuses refreshed'),
-                  ),
-                );
-              },
-            );
+            value.refreshpaths(context);
           },
           child: const Icon(Icons.refresh),
         ),

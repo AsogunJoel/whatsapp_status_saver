@@ -52,24 +52,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Privacy Policy'),
-        actions: [
-          // IconButton(
-          //   onPressed: () {
-          //     _controla!.canGoBack().then((value) {
-          //       _controla!.goBack();
-          //     });
-          //   },
-          //   icon: const Icon(Icons.arrow_back_ios),
-          // ),
-          // IconButton(
-          //   onPressed: () {
-          //     _controla!.canGoForward().then((value) {
-          //       _controla!.goForward();
-          //     });
-          //   },
-          //   icon: const Icon(Icons.arrow_forward_ios),
-          // ),
-        ],
+        actions: [],
       ),
       body: WebView(
         initialUrl: 'about:blank',
@@ -78,9 +61,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
           _controla = webViewController;
           _loadHtmlFromAssets();
         },
-        // onWebViewCreated: (WebViewController webViewController) {
-        //   _controller.complete(webViewController);
-        // },
+
         gestureRecognizers: {}..add(Factory<VerticalDragGestureRecognizer>(
             () => VerticalDragGestureRecognizer())),
         onProgress: (int progress) {

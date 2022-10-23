@@ -1,13 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import 'package:whatsapp_status_saver/directory_response/check_directory_response.dart';
-import 'package:whatsapp_status_saver/providers/adstate.dart';
-import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
-import 'package:whatsapp_status_saver/screens/widgets/image/image_view.dart';
+import 'package:whatsapp_status_saver/screens/widgets/image/singleimage.dart';
+
+import '../../../../directory_response/check_directory_response.dart';
+import '../../../../providers/adstate.dart';
+import '../../../../providers/get_statuses_provider.dart';
+import '../../../widgets/image/single_page_image.dart';
+import 'image_view.dart';
 
 class WhatsappImagePage extends StatefulWidget {
   const WhatsappImagePage({super.key});
@@ -48,6 +49,7 @@ class _WhatsappImagePageState extends State<WhatsappImagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           if (_bannerAd != null)
@@ -88,26 +90,46 @@ class _WhatsappImagePageState extends State<WhatsappImagePage> {
                                 ),
                               );
                         },
-                        child: SingleVideo(
+                        child: SingleGridImage(
                           filePath: file.getImages[index].status.path,
                         ),
                       );
                     },
                   );
                 } else if (file.itemsData.status == Status.ERROR) {
-                  return Center(
-                    child: Text(
-                      file.itemsData.message,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        letterSpacing: .5,
-                        fontSize: 15,
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            file.itemsData.message,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              letterSpacing: .5,
+                              fontSize: 17,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   );
                 } else if (file.itemsData.status == Status.LOADING) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        CircularProgressIndicator(),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Please wait...',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        )
+                      ],
+                    ),
                   );
                 } else if (file.getImages.isEmpty) {
                   return const Center(
@@ -136,48 +158,6 @@ class _WhatsappImagePageState extends State<WhatsappImagePage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class SingleVideo extends StatefulWidget {
-  const SingleVideo({
-    Key? key,
-    this.filePath,
-  }) : super(key: key);
-  final String? filePath;
-  @override
-  State<SingleVideo> createState() => _SingleVideoState();
-}
-
-class _SingleVideoState extends State<SingleVideo>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade300,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Image.file(
-          File(
-            widget.filePath.toString(),
-          ),
-          errorBuilder: (context, error, stackTrace) => const Center(
-            child: Text(
-              'Unavailable, please refresh',
-              textAlign: TextAlign.center,
-            ),
-          ),
-          fit: BoxFit.cover,
-        ),
       ),
     );
   }

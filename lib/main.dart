@@ -4,7 +4,10 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/providers/adstate.dart';
 import 'package:whatsapp_status_saver/providers/bottom_nav.dart';
+import 'package:whatsapp_status_saver/providers/business_provider.dart';
+import 'package:whatsapp_status_saver/providers/gb_provider.dart';
 import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
+import 'package:whatsapp_status_saver/providers/yowhatsapp_provider.dart';
 import 'package:whatsapp_status_saver/screens/welcome_page.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -35,6 +38,15 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => GetStatusProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => GetYoStatusProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => GBStatusProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => BusinessStatusProvider(),
         ),
       ],
       child: MaterialApp(

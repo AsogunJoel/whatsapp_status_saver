@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/providers/adstate.dart';
-import 'package:whatsapp_status_saver/screens/widgets/videos/widgets/videogrid.dart';
+import 'package:whatsapp_status_saver/screens/yowhatsapp/widgets/videos/widgets/videogrid.dart';
 
-class WhatsappVideoPage extends StatefulWidget {
-  const WhatsappVideoPage({super.key});
+class YoWhatsappVideoPage extends StatefulWidget {
+  const YoWhatsappVideoPage({super.key});
 
   @override
-  State<WhatsappVideoPage> createState() => _WhatsappVideoPageState();
+  State<YoWhatsappVideoPage> createState() => _YoWhatsappVideoPageState();
 }
 
-class _WhatsappVideoPageState extends State<WhatsappVideoPage> {
+class _YoWhatsappVideoPageState extends State<YoWhatsappVideoPage> {
   BannerAd? _bannerAd;
 
   @override
@@ -33,6 +33,12 @@ class _WhatsappVideoPageState extends State<WhatsappVideoPage> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -45,7 +51,7 @@ class _WhatsappVideoPageState extends State<WhatsappVideoPage> {
             ),
           ),
         const Expanded(
-          child: VideoGrid(),
+          child: YoVideoGrid(),
         ),
       ],
     );

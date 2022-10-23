@@ -1,19 +1,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.joelasogunshoguncoder.whatsapp_status_saver">
-
+   
    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-   <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
-   <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+   <!-- <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+   <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" /> -->
+   <!-- android.permission.MANAGE_MEDIA -->
    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+   <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+                 android:maxSdkVersion="32"/>
+   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                 android:maxSdkVersion="29"/> -->
    <uses-permission android:name="android.permission.INTERNET"/>
-   <uses-permission android:name="android.permission"/>
-   <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
-   <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> -->
    <application
-        android:label="Whatsapp Status Saver"
-        android:name="${applicationName}"
         android:requestLegacyExternalStorage="true"
+        android:label="Whatsapp Status Saver"
+        android:name="${applicationName}"        
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
@@ -44,5 +46,5 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-2196253802457103~2703566959"/>
-    </application>
+    </application>    
 </manifest>

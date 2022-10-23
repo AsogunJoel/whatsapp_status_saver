@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:whatsapp_status_saver/screens/privacypolicy/privacy_policy.dart';
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer({super.key});
@@ -16,8 +18,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
           Padding(
             padding: const EdgeInsets.only(
               top: 25.0,
-              // left: 20,
-              // right: 10,
               bottom: 5,
             ),
             child: Container(
@@ -77,7 +77,21 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 fontSize: 15,
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              // Navigator.of(context)
+              //     .push(
+              //   CupertinoPageRoute(
+              //     builder: (context) => const PrivacyPolicy(),
+              //   ),
+              // )
+              //     .then(
+              //   (value) {
+              //     if (Scaffold.of(context).isDrawerOpen) {
+              //       Scaffold.of(context).closeDrawer();
+              //     }
+              //   },
+              // );
+            },
           ),
           ListTile(
             leading: const Icon(Icons.more),
@@ -87,7 +101,16 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 fontSize: 15,
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              // if (Scaffold.of(context).isDrawerOpen) {
+              //   Scaffold.of(context).closeDrawer();
+              // }
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) => const PrivacyPolicy(),
+              //   ),
+              // );
+            },
           ),
           ListTile(
             leading: const Icon(Icons.info),
