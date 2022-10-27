@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_native_api/flutter_native_api.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:saf/saf.dart';
 
@@ -89,8 +90,16 @@ class GetYoStatusProvider with ChangeNotifier {
     if (directory!.existsSync()) {
       final anodir = Directory(AppConstants.yoMyStatPath);
       if (status!.isGranted && isGranted != null && isGranted!) {
-        await saf!.cache();
         try {
+          if (!anodir.existsSync()) {
+            await saf!.cache();
+            print('cache create');
+          }
+          if (anodir.existsSync()) {
+            await saf!.sync().then((value) {
+              print(value);
+            });
+          }
           items = anodir
               .listSync()
               .map(
@@ -187,7 +196,15 @@ class GetYoStatusProvider with ChangeNotifier {
   bool imageSaved = false;
   resetimageSaved() {
     imageSaved = false;
+    notifyListeners();
   }
+
+  // Future<dynamic> shareImage(imagePath) async {
+  //   var val = await saf!.getCachedFilesPath();
+  //   print(val!.toList());
+  //   await FlutterNativeApi.shareImage(imagePath);
+  //   notifyListeners();
+  // }
 
   Future<void> refreshpaths(context) async {
     getYoWhatAppStatus().then(
@@ -208,6 +225,12 @@ class GetYoStatusProvider with ChangeNotifier {
       },
     );
     notifyListeners();
+  }
+
+  removeOldStatuses() async {
+    await saf!.clearCache().then((value) {
+      print(value);
+    });
   }
 }
 

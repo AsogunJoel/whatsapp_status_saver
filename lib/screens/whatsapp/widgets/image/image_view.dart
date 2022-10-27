@@ -256,7 +256,7 @@ class _ImagePageViewState extends State<ImagePageView>
                   _interstitialAd?.show();
                 }
                 _animationController!.reverse();
-                statusProvider.shareImage(imagePath).then((value) {});
+                statusProvider.shareImage(imagePath);
               },
             ),
             Bubble(

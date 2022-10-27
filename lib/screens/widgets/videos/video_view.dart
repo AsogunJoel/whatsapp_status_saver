@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:whatsapp_status_saver/providers/adstate.dart';
 import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
+import 'package:whatsapp_status_saver/providers/yowhatsapp_provider.dart';
 
 class VideoView extends StatefulWidget {
   const VideoView({super.key, required this.videoPath});
@@ -22,20 +23,6 @@ class _VideoViewState extends State<VideoView> with TickerProviderStateMixin {
 
   AnimationController? _animationControllerrrr;
   VideoPlayerController? _controller;
-
-  _playVideo({required String file}) {
-    localFile().then((value) {
-      _controller = VideoPlayerController.file(
-        value,
-        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
-      )
-        ..addListener(() {
-          setState(() {});
-        })
-        ..setLooping(false)
-        ..initialize();
-    });
-  }
 
   @override
   void initState() {
@@ -62,6 +49,7 @@ class _VideoViewState extends State<VideoView> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 450),
     );
+    loadInterstitialAd();
   }
 
   InterstitialAd? _interstitialAd;
@@ -197,6 +185,9 @@ class _VideoViewState extends State<VideoView> with TickerProviderStateMixin {
                                     color: Colors.white,
                                   ),
                                 ),
+                                const SizedBox(
+                                  width: 70,
+                                )
                               ],
                             ),
                           ),
@@ -269,8 +260,8 @@ class _VideoViewState extends State<VideoView> with TickerProviderStateMixin {
               ),
       ),
       floatingActionButton: Consumer<GetStatusProvider>(
-        builder: (context, statusProvider, child) => Transform.translate(
-          offset: const Offset(-10, -60),
+        builder: (_, statusProvider, child) => Transform.translate(
+          offset: const Offset(-0, -0),
           child: FloatingActionBubble(
             items: <Bubble>[
               Bubble(
@@ -284,7 +275,7 @@ class _VideoViewState extends State<VideoView> with TickerProviderStateMixin {
                     context: context,
                     builder: (context) => Dialog(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(5),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -294,7 +285,7 @@ class _VideoViewState extends State<VideoView> with TickerProviderStateMixin {
                             const Padding(
                               padding: EdgeInsets.all(20.0),
                               child: Text(
-                                'Image will be saved to gallery',
+                                'Video will be saved to gallery',
                                 style: TextStyle(fontSize: 18),
                               ),
                             ),
@@ -304,13 +295,10 @@ class _VideoViewState extends State<VideoView> with TickerProviderStateMixin {
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                   ),
                                   onPressed: () {
-                                    // if (_interstitialAd == null) {
-                                    //   loadInterstitialAd();
-                                    // }
                                     Navigator.of(context).pop();
                                     ScaffoldMessenger.of(context)
                                         .clearSnackBars();
@@ -381,12 +369,15 @@ class _VideoViewState extends State<VideoView> with TickerProviderStateMixin {
                 iconColor: Colors.white,
                 bubbleColor: Colors.green,
                 icon: Icons.share,
-                titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+                titleStyle: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
                 onPress: () {
                   if (_interstitialAd != null) {
                     _interstitialAd?.show();
                   }
-                  statusProvider.shareImage(widget.videoPath).then((value) {
+                  statusProvider.shareVideo(widget.videoPath).then((value) {
                     _animationControllerrrr!.reverse();
                   });
                 },

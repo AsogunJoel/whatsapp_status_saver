@@ -52,7 +52,7 @@ class _BusinessImagePageViewState extends State<BusinessImagePageView>
 
   void _loadInterstitialAd() {
     InterstitialAd.load(
-      adUnitId: AdState.interstitialAdUnitId,
+      adUnitId: AdState.businessinterstitialAdUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {

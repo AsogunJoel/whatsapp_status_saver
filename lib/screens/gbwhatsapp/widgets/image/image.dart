@@ -30,7 +30,7 @@ class _GBWhatsappImagePageState extends State<GBWhatsappImagePage> {
         setState(() {
           _bannerAd = BannerAd(
             size: AdSize.banner,
-            adUnitId: AdState.bannerAdUnitId,
+            adUnitId: AdState.gbbannerAdUnitId,
             listener: adState.adListener,
             request: const AdRequest(),
           )..load();

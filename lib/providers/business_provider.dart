@@ -71,9 +71,15 @@ class BusinessStatusProvider with ChangeNotifier {
       final anodir = Directory(AppConstants.bwhatsappMyStatPath);
       if (status!.isGranted && isGranted != null && isGranted!) {
         try {
-          await saf2!.cache().then((value) {
-            print(value);
-          });
+          if (!anodir.existsSync()) {
+            await saf2!.cache();
+            print('cache create');
+          }
+          if (anodir.existsSync()) {
+            await saf2!.sync().then((value) {
+              print(value);
+            });
+          }
           items = anodir
               .listSync()
               .map(

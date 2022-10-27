@@ -31,7 +31,6 @@ class _YoImagePageViewState extends State<YoImagePageView>
       vsync: this,
       duration: const Duration(milliseconds: 260),
     );
-
     final curvedAnimation = CurvedAnimation(
       curve: Curves.easeInOut,
       parent: _animationController!,
@@ -50,7 +49,7 @@ class _YoImagePageViewState extends State<YoImagePageView>
 
   void _loadInterstitialAd() {
     InterstitialAd.load(
-      adUnitId: AdState.interstitialAdUnitId,
+      adUnitId: AdState.yointerstitialAdUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
@@ -71,10 +70,6 @@ class _YoImagePageViewState extends State<YoImagePageView>
     );
   }
 
-  // Future<File> localFile() async {
-  //   return File('$imagePath');
-  // }
-
   @override
   void dispose() {
     super.dispose();
@@ -94,8 +89,8 @@ class _YoImagePageViewState extends State<YoImagePageView>
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Consumer<GetYoStatusProvider>(
-        builder: (context, yoFile, child) {
+      body: Consumer2<GetYoStatusProvider, GetStatusProvider>(
+        builder: (context, yoFile, file, child) {
           return PageView.builder(
             controller: _pageController,
             itemCount: yoFile.yogetImages.length,
@@ -105,9 +100,11 @@ class _YoImagePageViewState extends State<YoImagePageView>
               );
             },
             onPageChanged: (value) {
+              file.resetimageSaved();
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               setState(() {
                 imagePath = yoFile.yogetImages[value].status.path;
+                print(imagePath);
                 pagenumber = value;
               });
               _animationController!.reverse();
@@ -225,11 +222,11 @@ class _YoImagePageViewState extends State<YoImagePageView>
               icon: Icons.share,
               titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
               onPress: () {
+                _animationController!.reverse();
                 if (_interstitialAd != null) {
                   _interstitialAd?.show();
                 }
-                _animationController!.reverse();
-                statusProvider.shareImage(imagePath).then((value) {});
+                statusProvider.shareImage(imagePath);
               },
             ),
             Bubble(

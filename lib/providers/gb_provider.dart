@@ -72,9 +72,15 @@ class GBStatusProvider with ChangeNotifier {
       final anodir = Directory(AppConstants.gbwhatsappMyStatPath);
       if (status!.isGranted && isGranted != null && isGranted!) {
         try {
-          await saf1!.cache().then((value) {
-            print(value);
-          });
+          if (!anodir.existsSync()) {
+            await saf1!.cache();
+            print('cache create');
+          }
+          if (anodir.existsSync()) {
+            await saf1!.sync().then((value) {
+              print(value);
+            });
+          }
           items = anodir
               .listSync()
               .map(

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
+import 'package:whatsapp_status_saver/providers/yowhatsapp_provider.dart';
 
 import '../providers/bottom_nav.dart';
 import '../providers/get_statuses_provider.dart';
@@ -23,10 +24,6 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-    Provider.of<GetStatusProvider>(
-      context,
-      listen: false,
-    ).initializer(ctx: context);
     Future.delayed(
       const Duration(seconds: 2),
     ).then(
@@ -34,6 +31,10 @@ class _WelcomePageState extends State<WelcomePage> {
         FlutterNativeSplash.remove();
       },
     );
+    Provider.of<GetStatusProvider>(
+      context,
+      listen: false,
+    ).initializer(ctx: context);
   }
 
   @override
@@ -54,8 +55,6 @@ class _WelcomePageState extends State<WelcomePage> {
           child: Consumer2<BottomNavProvider, GetStatusProvider>(
             builder: (context, value, value2, child) {
               return Column(
-                // shrinkWrap: true,
-                // physics: const BouncingScrollPhysics(),
                 children: [
                   Expanded(
                     flex: 6,

@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_api/flutter_native_api.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:saf/saf.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../constants/constants.dart';
 import '../directory_response/check_directory_response.dart';
@@ -80,8 +82,16 @@ class GetStatusProvider with ChangeNotifier {
       _itemsData = DirectoryResponse.loading('loading... ');
       final anodir = Directory(AppConstants.whatsappMyStatPath);
       if (status!.isGranted && isGranted != null && isGranted!) {
-        await saf!.cache();
         try {
+          if (!anodir.existsSync()) {
+            await saf!.cache();
+            print('cache create');
+          }
+          if (anodir.existsSync()) {
+            await saf!.sync().then((value) {
+              print(value);
+            });
+          }
           items = anodir
               .listSync()
               .map(
@@ -204,7 +214,7 @@ class GetStatusProvider with ChangeNotifier {
         );
       },
     );
-    ;
+
     notifyListeners();
   }
 
@@ -221,7 +231,14 @@ class GetStatusProvider with ChangeNotifier {
   bool loading = false;
   Future<dynamic> shareImage(imagePath) async {
     loading = true;
-    await FlutterNativeApi.shareImage(imagePath);
+    await Share.shareFiles([imagePath]);
+    loading = false;
+    notifyListeners();
+  }
+
+  Future<dynamic> shareVideo(videoPath) async {
+    loading = true;
+    await Share.shareFiles([videoPath]);
     loading = false;
     notifyListeners();
   }

@@ -36,7 +36,7 @@ class _VideoGridState extends State<VideoGrid>
               maxCrossAxisExtent: MediaQuery.of(context).size.width / 3,
               crossAxisSpacing: 5,
               mainAxisSpacing: 5,
-              childAspectRatio: 2.5 / 3,
+              childAspectRatio: 2.5 / 4,
             ),
             padding: const EdgeInsets.all(8),
             itemCount: file.getVideos.length,

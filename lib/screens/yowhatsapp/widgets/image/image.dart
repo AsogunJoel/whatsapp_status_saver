@@ -30,7 +30,7 @@ class _YoWhatsappImagePageState extends State<YoWhatsappImagePage> {
         setState(() {
           _bannerAd = BannerAd(
             size: AdSize.banner,
-            adUnitId: AdState.bannerAdUnitId,
+            adUnitId: AdState.yobannerAdUnitId,
             listener: adState.adListener,
             request: const AdRequest(),
           )..load();

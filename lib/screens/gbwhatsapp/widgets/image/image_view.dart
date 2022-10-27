@@ -50,7 +50,7 @@ class _GBImagePageViewState extends State<GBImagePageView>
 
   void _loadInterstitialAd() {
     InterstitialAd.load(
-      adUnitId: AdState.interstitialAdUnitId,
+      adUnitId: AdState.gbinterstitialAdUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
