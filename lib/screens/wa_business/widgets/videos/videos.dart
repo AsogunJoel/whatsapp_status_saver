@@ -26,12 +26,18 @@ class _BusinessWhatsappVideoPageState extends State<BusinessWhatsappVideoPage> {
       setState(() {
         _bannerAd = BannerAd(
           size: AdSize.banner,
-          adUnitId: AdState.videobannerAdUnitId,
+          adUnitId: AdState.businessvideobannerAdUnitId,
           listener: adState.adListener,
           request: const AdRequest(),
         )..load();
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _bannerAd!.dispose();
   }
 
   @override

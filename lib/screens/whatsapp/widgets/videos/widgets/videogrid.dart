@@ -70,6 +70,7 @@ class _VideoGridState extends State<VideoGrid>
                 letterSpacing: .5,
                 fontSize: 15,
               ),
+              semanticsLabel: file.itemsData.message,
             ),
           );
         } else if (file.itemsData.status == Status.LOADING) {

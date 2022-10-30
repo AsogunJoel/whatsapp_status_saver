@@ -66,6 +66,7 @@ class _YoVideoGridState extends State<YoVideoGrid>
                 letterSpacing: .5,
                 fontSize: 15,
               ),
+              semanticsLabel: file.itemsData.message,
             ),
           );
         } else if (file.itemsData.status == Status.LOADING) {
@@ -79,6 +80,7 @@ class _YoVideoGridState extends State<YoVideoGrid>
                   child: Text(
                     'Please wait...',
                     style: TextStyle(fontSize: 15),
+                    semanticsLabel: 'Please wait...',
                   ),
                 )
               ],
@@ -93,6 +95,7 @@ class _YoVideoGridState extends State<YoVideoGrid>
                 letterSpacing: .5,
                 fontSize: 15,
               ),
+              semanticsLabel: 'No recently viewed videos',
             ),
           );
         } else {

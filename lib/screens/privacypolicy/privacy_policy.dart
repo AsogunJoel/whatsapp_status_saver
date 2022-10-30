@@ -61,7 +61,6 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
           _controla = webViewController;
           _loadHtmlFromAssets();
         },
-
         gestureRecognizers: {}..add(Factory<VerticalDragGestureRecognizer>(
             () => VerticalDragGestureRecognizer())),
         onProgress: (int progress) {
@@ -70,14 +69,6 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
         javascriptChannels: <JavascriptChannel>{
           _toasterJavascriptChannel(context),
         },
-        // navigationDelegate: (NavigationRequest request) {
-        //   if (request.url.startsWith('https://www.youtube.com/')) {
-        //     print('blocking navigation to $request}');
-        //     return NavigationDecision.prevent;
-        //   }
-        //   print('allowing navigation to $request');
-        //   return NavigationDecision.navigate;
-        // },
         onPageStarted: (String url) {
           print('Page started loading: $url');
         },
@@ -86,6 +77,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
         },
         gestureNavigationEnabled: true,
         backgroundColor: const Color(0x00000000),
+        zoomEnabled: true,
       ),
     );
   }

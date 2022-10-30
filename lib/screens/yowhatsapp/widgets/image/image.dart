@@ -119,6 +119,7 @@ class _YoWhatsappImagePageState extends State<YoWhatsappImagePage> {
                           letterSpacing: .5,
                           fontSize: 17,
                         ),
+                        semanticsLabel: file.itemsData.message,
                       ),
                     ),
                   );

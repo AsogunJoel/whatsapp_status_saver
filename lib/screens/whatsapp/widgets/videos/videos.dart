@@ -33,6 +33,12 @@ class _WhatsappVideoPageState extends State<WhatsappVideoPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _bannerAd!.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [

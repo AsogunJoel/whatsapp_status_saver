@@ -10,9 +10,7 @@ class AdState {
 
   static String get bannerAdUnitId {
     if (Platform.isAndroid) {
-      // final androidBannerID = dotenv.env['AndroidAdd'];
-      // print(androidBannerID);
-      final androidTestBannerID = dotenv.env['testadd'];
+      final androidTestBannerID = dotenv.env['whatsappad'];
       return androidTestBannerID!;
     } else if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/2934735716';
@@ -23,9 +21,7 @@ class AdState {
 
   static String get yobannerAdUnitId {
     if (Platform.isAndroid) {
-      // final androidBannerID = dotenv.env['AndroidAdd'];
-      // print(androidBannerID);
-      final androidTestBannerID = dotenv.env['testadd'];
+      final androidTestBannerID = dotenv.env['yowhatsappad'];
       return androidTestBannerID!;
     } else if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/2934735716';
@@ -36,9 +32,7 @@ class AdState {
 
   static String get businessbannerAdUnitId {
     if (Platform.isAndroid) {
-      // final androidBannerID = dotenv.env['AndroidAdd'];
-      // print(androidBannerID);
-      final androidTestBannerID = dotenv.env['testadd'];
+      final androidTestBannerID = dotenv.env['businesswhatsappad'];
       return androidTestBannerID!;
     } else if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/2934735716';
@@ -49,9 +43,7 @@ class AdState {
 
   static String get gbbannerAdUnitId {
     if (Platform.isAndroid) {
-      // final androidBannerID = dotenv.env['AndroidAdd'];
-      // print(androidBannerID);
-      final androidTestBannerID = dotenv.env['testadd'];
+      final androidTestBannerID = dotenv.env['gbwhatsappad'];
       return androidTestBannerID!;
     } else if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/2934735716';
@@ -62,7 +54,8 @@ class AdState {
 
   static String get videobannerAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/6300978111';
+      final androidTestBannerID = dotenv.env['videowhatsapp'];
+      return androidTestBannerID!;
     } else if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/2934735716';
     } else {
@@ -70,40 +63,43 @@ class AdState {
     }
   }
 
-  // static String get videobannerAdUnitId {
-  //   if (Platform.isAndroid) {
-  //     return 'ca-app-pub-3940256099942544/6300978111';
-  //   } else if (Platform.isIOS) {
-  //     return 'ca-app-pub-3940256099942544/2934735716';
-  //   } else {
-  //     throw UnsupportedError('Unsupported platform');
-  //   }
-  // }
+  static String get businessvideobannerAdUnitId {
+    if (Platform.isAndroid) {
+      final androidTestBannerID = dotenv.env['businessvideowhatsapp'];
+      return androidTestBannerID!;
+    } else if (Platform.isIOS) {
+      return 'ca-app-pub-3940256099942544/2934735716';
+    } else {
+      throw UnsupportedError('Unsupported platform');
+    }
+  }
 
-  // static String get videobannerAdUnitId {
-  //   if (Platform.isAndroid) {
-  //     return 'ca-app-pub-3940256099942544/6300978111';
-  //   } else if (Platform.isIOS) {
-  //     return 'ca-app-pub-3940256099942544/2934735716';
-  //   } else {
-  //     throw UnsupportedError('Unsupported platform');
-  //   }
-  // }
+  static String get yovideobannerAdUnitId {
+    if (Platform.isAndroid) {
+      final androidTestBannerID = dotenv.env['yovideowhatsapp'];
+      return androidTestBannerID!;
+    } else if (Platform.isIOS) {
+      return 'ca-app-pub-3940256099942544/2934735716';
+    } else {
+      throw UnsupportedError('Unsupported platform');
+    }
+  }
 
-  // static String get videobannerAdUnitId {
-  //   if (Platform.isAndroid) {
-  //     return 'ca-app-pub-3940256099942544/6300978111';
-  //   } else if (Platform.isIOS) {
-  //     return 'ca-app-pub-3940256099942544/2934735716';
-  //   } else {
-  //     throw UnsupportedError('Unsupported platform');
-  //   }
-  // }
+  static String get gbvideobannerAdUnitId {
+    if (Platform.isAndroid) {
+      final androidTestBannerID = dotenv.env['gbwhatsappvideoad'];
+      return androidTestBannerID!;
+    } else if (Platform.isIOS) {
+      return 'ca-app-pub-3940256099942544/2934735716';
+    } else {
+      throw UnsupportedError('Unsupported platform');
+    }
+  }
 
   static String get interstitialAdUnitId {
     if (Platform.isAndroid) {
-      // final androidInterstitialID = dotenv.env['interstitialadd'];
-      return "ca-app-pub-3940256099942544/1033173712";
+      final androidTestBannerID = dotenv.env['interstitialadd'];
+      return androidTestBannerID!;
     } else if (Platform.isIOS) {
       return "ca-app-pub-3940256099942544/4411468910";
     } else {
@@ -113,8 +109,8 @@ class AdState {
 
   static String get yointerstitialAdUnitId {
     if (Platform.isAndroid) {
-      // final androidInterstitialID = dotenv.env['interstitialadd'];
-      return "ca-app-pub-3940256099942544/1033173712";
+      final androidTestBannerID = dotenv.env['yowhatsappinterstitialadds'];
+      return androidTestBannerID!;
     } else if (Platform.isIOS) {
       return "ca-app-pub-3940256099942544/4411468910";
     } else {
@@ -124,8 +120,8 @@ class AdState {
 
   static String get businessinterstitialAdUnitId {
     if (Platform.isAndroid) {
-      // final androidInterstitialID = dotenv.env['interstitialadd'];
-      return "ca-app-pub-3940256099942544/1033173712";
+      final androidTestBannerID = dotenv.env['businesswhatsappinterstitialadd'];
+      return androidTestBannerID!;
     } else if (Platform.isIOS) {
       return "ca-app-pub-3940256099942544/4411468910";
     } else {
@@ -135,8 +131,8 @@ class AdState {
 
   static String get gbinterstitialAdUnitId {
     if (Platform.isAndroid) {
-      // final androidInterstitialID = dotenv.env['interstitialadd'];
-      return "ca-app-pub-3940256099942544/1033173712";
+      final androidTestBannerID = dotenv.env['gbwhatsappinterstitialadd'];
+      return androidTestBannerID!;
     } else if (Platform.isIOS) {
       return "ca-app-pub-3940256099942544/4411468910";
     } else {
@@ -145,7 +141,6 @@ class AdState {
   }
 
   BannerAdListener get adListener => _adListener;
-
   final BannerAdListener _adListener = BannerAdListener(
     onAdLoaded: (ad) => print('Ad loaded: ${ad.adUnitId}'),
     onAdClosed: (ad) => print('Ad closed: ${ad.adUnitId}'),

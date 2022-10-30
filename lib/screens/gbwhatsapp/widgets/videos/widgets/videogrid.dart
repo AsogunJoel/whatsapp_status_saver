@@ -24,7 +24,6 @@ class _YoVideoGridState extends State<GBVideoGrid>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
     return Consumer<GBStatusProvider>(
       builder: (context, file, child) {
         if (file.itemsData.status == Status.COMPLETED &&
@@ -69,6 +68,7 @@ class _YoVideoGridState extends State<GBVideoGrid>
                 letterSpacing: .5,
                 fontSize: 15,
               ),
+              semanticsLabel: file.itemsData.message,
             ),
           );
         } else if (file.itemsData.status == Status.LOADING) {

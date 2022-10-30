@@ -93,12 +93,9 @@ class GetYoStatusProvider with ChangeNotifier {
         try {
           if (!anodir.existsSync()) {
             await saf!.cache();
-            print('cache create');
           }
-          if (anodir.existsSync()) {
-            await saf!.sync().then((value) {
-              print(value);
-            });
+          if (anodir.existsSync() && anodir.listSync().isEmpty) {
+            await saf!.sync();
           }
           items = anodir
               .listSync()
@@ -198,13 +195,6 @@ class GetYoStatusProvider with ChangeNotifier {
     imageSaved = false;
     notifyListeners();
   }
-
-  // Future<dynamic> shareImage(imagePath) async {
-  //   var val = await saf!.getCachedFilesPath();
-  //   print(val!.toList());
-  //   await FlutterNativeApi.shareImage(imagePath);
-  //   notifyListeners();
-  // }
 
   Future<void> refreshpaths(context) async {
     getYoWhatAppStatus().then(

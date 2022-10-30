@@ -103,6 +103,7 @@ class _GBWhatsappImagePageState extends State<GBWhatsappImagePage> {
                         letterSpacing: .5,
                         fontSize: 15,
                       ),
+                      semanticsLabel: file.itemsData.message,
                     ),
                   );
                 } else if (file.itemsData.status == Status.LOADING) {

@@ -101,6 +101,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                           letterSpacing: .5,
                                           fontWeight: FontWeight.w500,
                                         ),
+                                        semanticsLabel: 'Whatsapp Business',
                                       ),
                                       onTap: () {
                                         value.formatIndex();
@@ -136,6 +137,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                           letterSpacing: .5,
                                           fontWeight: FontWeight.w500,
                                         ),
+                                        semanticsLabel: 'Whatsapp Business',
                                       ),
                                       onTap: () {
                                         value.formatIndex();
@@ -172,6 +174,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                           letterSpacing: .5,
                                           fontWeight: FontWeight.w500,
                                         ),
+                                        semanticsLabel: 'YoWhatsapp',
                                       ),
                                       onTap: () {
                                         value.formatIndex();
@@ -208,6 +211,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                           letterSpacing: .5,
                                           fontWeight: FontWeight.w500,
                                         ),
+                                        semanticsLabel: 'GB Whatsapp',
                                       ),
                                       onTap: () {
                                         value.formatIndex();
@@ -239,7 +243,10 @@ class _WelcomePageState extends State<WelcomePage> {
                                       CircleAvatar(
                                         child: Icon(Icons.share),
                                       ),
-                                      Text('Share')
+                                      Text(
+                                        'Share',
+                                        semanticsLabel: 'Share',
+                                      )
                                     ],
                                   ),
                                   Column(
@@ -250,6 +257,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                       Text(
                                         'Rate app',
                                         textAlign: TextAlign.center,
+                                        semanticsLabel: 'Rate app',
                                       )
                                     ],
                                   ),
@@ -270,6 +278,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                         Text(
                                           'Privacy \npolicy',
                                           textAlign: TextAlign.center,
+                                          semanticsLabel: 'Privacy policy',
                                         )
                                       ],
                                     ),
@@ -279,7 +288,10 @@ class _WelcomePageState extends State<WelcomePage> {
                                       CircleAvatar(
                                         child: Icon(Icons.info),
                                       ),
-                                      Text('About')
+                                      Text(
+                                        'About',
+                                        semanticsLabel: 'Privacy policy',
+                                      )
                                     ],
                                   ),
                                 ],

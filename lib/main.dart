@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import 'package:whatsapp_status_saver/providers/adstate.dart';
-import 'package:whatsapp_status_saver/providers/bottom_nav.dart';
-import 'package:whatsapp_status_saver/providers/business_provider.dart';
-import 'package:whatsapp_status_saver/providers/gb_provider.dart';
-import 'package:whatsapp_status_saver/providers/get_statuses_provider.dart';
-import 'package:whatsapp_status_saver/providers/yowhatsapp_provider.dart';
-import 'package:whatsapp_status_saver/screens/welcome_page.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
+
+import 'providers/adstate.dart';
+import 'providers/bottom_nav.dart';
+import 'providers/business_provider.dart';
+import 'providers/gb_provider.dart';
+import 'providers/get_statuses_provider.dart';
+import 'providers/yowhatsapp_provider.dart';
+import 'screens/welcome_page.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +19,11 @@ void main() async {
   final adState = AdState(initFuture);
   await dotenv.load(fileName: ".env");
   MobileAds.instance.initialize();
+  MobileAds.instance.updateRequestConfiguration(
+    RequestConfiguration(
+      testDeviceIds: ['6C0441EB3643C8D9B5F7C8E04C01A6F7'],
+    ),
+  );
   runApp(
     Provider.value(
       value: adState,
