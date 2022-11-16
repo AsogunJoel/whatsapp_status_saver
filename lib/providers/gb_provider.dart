@@ -26,22 +26,31 @@ class GBStatusProvider with ChangeNotifier {
 
   bool? isGranted = false;
   Saf? saf1;
+  Directory? directory;
+  Directory? directory2;
+  Directory? anodir;
 
   initializerGB({ctx}) async {
-    final directory = Directory(AppConstants.GBWhatsppPath);
-    if (directory.existsSync()) {
-      saf1 = Saf(AppConstants.safGBWhatsppPath);
-      isGranted = await saf1!.getDirectoryPermission(isDynamic: false);
-    }
-    status = await Permission.storage.request();
+    _itemsData = DirectoryResponse.loading('loading... ');
+    clearData();
     Future.delayed(
-      const Duration(milliseconds: 500),
+      const Duration(milliseconds: 1000),
     ).then(
-      (value) {
-        getGBWhatsappStatus(ctx: ctx);
+      (value) async {
+        directory = Directory(AppConstants.GBWhatsppPath);
+        directory2 = Directory(AppConstants.GBWhatsppAlternatePath);
+        if (directory!.existsSync()) {
+          saf1 = Saf(AppConstants.safGBWhatsppPath);
+          isGranted = await saf1!.getDirectoryPermission(isDynamic: false);
+        } else if (directory2!.existsSync()) {
+          saf1 = Saf(AppConstants.safGBWhatsppAlternativePath);
+          isGranted = await saf1!.getDirectoryPermission(isDynamic: false);
+        }
+        status = await Permission.storage.request();
       },
-    );
-    notifyListeners();
+    ).then((value) {
+      getGBWhatsappStatus(ctx: ctx);
+    });
   }
 
   clearData() {
@@ -67,21 +76,24 @@ class GBStatusProvider with ChangeNotifier {
   DirectoryResponse<List<StatusModel>> get itemsData => _itemsData;
   Future<void> getGBWhatsappStatus({ctx}) async {
     _itemsData = DirectoryResponse.loading('loading... ');
-    final directory = Directory(AppConstants.GBWhatsppPath);
-    if (directory.existsSync()) {
-      final anodir = Directory(AppConstants.gbwhatsappMyStatPath);
+    if (directory!.existsSync() || directory2!.existsSync()) {
+      if (directory!.existsSync()) {
+        anodir = Directory(AppConstants.gbwhatsappMyStatPath);
+      } else {
+        anodir = Directory(AppConstants.gbwhatsappMyStatAlternativePath);
+      }
       if (status!.isGranted && isGranted != null && isGranted!) {
         try {
-          if (!anodir.existsSync()) {
+          _itemsData =
+              DirectoryResponse.loading('Please wait, getting statuses');
+          if (anodir!.existsSync()) {
             await saf1!.cache();
-            print('cache create');
+            await saf1!.sync();
           }
-          if (anodir.existsSync()) {
-            await saf1!.sync().then((value) {
-              print(value);
-            });
+          if (!anodir!.existsSync()) {
+            await saf1!.cache();
           }
-          items = anodir
+          items = anodir!
               .listSync()
               .map(
                 (e) => StatusModel.fromRTDB(e),
@@ -186,6 +198,7 @@ class GBStatusProvider with ChangeNotifier {
   }
 
   Future<void> refreshpaths(context) async {
+    clearData();
     getGBWhatsappStatus().then(
       (value) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -205,5 +218,11 @@ class GBStatusProvider with ChangeNotifier {
     );
 
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    clearData();
   }
 }

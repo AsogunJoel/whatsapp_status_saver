@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:whatsapp_status_saver/directory_response/check_directory_response.dart';
 import 'package:whatsapp_status_saver/utils/get_thumbails.dart';
 
 class SingleVideo extends StatefulWidget {

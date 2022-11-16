@@ -47,21 +47,29 @@ class _YoImagePageViewState extends State<YoImagePageView>
     ).yogetImages[widget.imageIndex].status.path;
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Provider.of<GetYoStatusProvider>(
+      context,
+      listen: false,
+    ).resetimageSaved();
+  }
+
   void _loadInterstitialAd() {
     InterstitialAd.load(
       adUnitId: AdState.yointerstitialAdUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
+          setState(() {
+            _interstitialAd = ad;
+          });
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               _loadInterstitialAd();
             },
           );
-          setState(() {
-            _interstitialAd = ad;
-            print('new adk,mnbv');
-          });
         },
         onAdFailedToLoad: (err) {
           print('Failed to load an interstitial ad: ${err.message}');
@@ -100,23 +108,22 @@ class _YoImagePageViewState extends State<YoImagePageView>
               );
             },
             onPageChanged: (value) {
-              file.resetimageSaved();
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              setState(() {
-                imagePath = yoFile.yogetImages[value].status.path;
-                print(imagePath);
-                pagenumber = value;
-              });
+              imagePath = yoFile.yogetImages[value].status.path;
+              print(imagePath);
+              pagenumber = value;
               _animationController!.reverse();
               if (_interstitialAd == null) {
                 _loadInterstitialAd();
               }
+              yoFile.resetimageSaved();
             },
           );
         },
       ),
-      floatingActionButton: Consumer<GetStatusProvider>(
-        builder: (context, statusProvider, child) => FloatingActionBubble(
+      floatingActionButton: Consumer2<GetStatusProvider, GetYoStatusProvider>(
+        builder: (context, statusProvider, yoValue, child) =>
+            FloatingActionBubble(
           items: <Bubble>[
             Bubble(
               title: "Save",
@@ -125,94 +132,47 @@ class _YoImagePageViewState extends State<YoImagePageView>
               icon: Icons.save,
               titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
               onPress: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => Dialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: Text(
-                              'Image will be saved to gallery',
-                              style: TextStyle(fontSize: 16),
+                ScaffoldMessenger.of(context).clearSnackBars();
+                _animationController!.reverse();
+                yoValue.imageSaved
+                    ? ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
                             ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
+                          backgroundColor: Colors.green,
+                          content: Text(
+                            'Picture already saved',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                      )
+                    : statusProvider.saveImagetoGallery(imagePath).then(
+                        (file) {
+                          yoValue.imageSaved = true;
+                          if (_interstitialAd != null) {
+                            _interstitialAd?.show();
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10),
                                 ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  ScaffoldMessenger.of(context)
-                                      .clearSnackBars();
-                                  _animationController!.reverse();
-                                  statusProvider.imageSaved
-                                      ? ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                          const SnackBar(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            backgroundColor: Colors.green,
-                                            content: Text(
-                                              'Picture already saved',
-                                              style: TextStyle(fontSize: 15),
-                                            ),
-                                          ),
-                                        )
-                                      : statusProvider
-                                          .saveImagetoGallery(imagePath)
-                                          .then(
-                                          (file) {
-                                            if (_interstitialAd != null) {
-                                              _interstitialAd?.show();
-                                            }
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(10),
-                                                    topRight:
-                                                        Radius.circular(10),
-                                                  ),
-                                                ),
-                                                backgroundColor: Colors.green,
-                                                content: Text(
-                                                  'Picture saved',
-                                                  style:
-                                                      TextStyle(fontSize: 15),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                },
-                                child: const Text('Continue'),
                               ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                );
+                              backgroundColor: Colors.green,
+                              content: Text(
+                                'Picture saved',
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            ),
+                          );
+                        },
+                      );
               },
             ),
             Bubble(

@@ -7,44 +7,10 @@ import 'package:whatsapp_status_saver/screens/widgets/image/singleimage.dart';
 import '../../../../directory_response/check_directory_response.dart';
 import '../../../../providers/adstate.dart';
 import '../../../../providers/get_statuses_provider.dart';
-import '../../../widgets/image/single_page_image.dart';
 import 'image_view.dart';
 
-class WhatsappImagePage extends StatefulWidget {
+class WhatsappImagePage extends StatelessWidget {
   const WhatsappImagePage({super.key});
-
-  @override
-  State<WhatsappImagePage> createState() => _WhatsappImagePageState();
-}
-
-class _WhatsappImagePageState extends State<WhatsappImagePage> {
-  BannerAd? _bannerAd;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(
-      context,
-    );
-    adState.initialization.then(
-      (value) {
-        setState(() {
-          _bannerAd = BannerAd(
-            size: AdSize.banner,
-            adUnitId: AdState.bannerAdUnitId,
-            listener: adState.adListener,
-            request: const AdRequest(),
-          )..load();
-        });
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _bannerAd!.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +18,7 @@ class _WhatsappImagePageState extends State<WhatsappImagePage> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          if (_bannerAd != null)
-            Container(
-              color: Colors.white,
-              child: SizedBox(
-                height: 50,
-                child: AdWidget(ad: _bannerAd!),
-              ),
-            ),
+          const WhatsappBannerAdBar(),
           Expanded(
             child: Consumer<GetStatusProvider>(
               builder: (context, file, child) {
@@ -120,12 +79,12 @@ class _WhatsappImagePageState extends State<WhatsappImagePage> {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         CircularProgressIndicator(),
                         Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Text(
-                            'Please wait...',
+                            file.itemsData.message,
                             style: TextStyle(fontSize: 15),
                           ),
                         )
@@ -162,4 +121,61 @@ class _WhatsappImagePageState extends State<WhatsappImagePage> {
       ),
     );
   }
+}
+
+class WhatsappBannerAdBar extends StatefulWidget {
+  const WhatsappBannerAdBar({super.key});
+
+  @override
+  State<WhatsappBannerAdBar> createState() => _WhatsappBannerAdBarState();
+}
+
+class _WhatsappBannerAdBarState extends State<WhatsappBannerAdBar>
+    with AutomaticKeepAliveClientMixin {
+  BannerAd? _bannerAd;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final adState = Provider.of<AdState>(
+      context,
+    );
+    adState.initialization.then(
+      (value) {
+        setState(() {
+          _bannerAd = BannerAd(
+            size: AdSize.banner,
+            adUnitId: AdState.bannerAdUnitId,
+            listener: adState.adListener,
+            request: const AdRequest(),
+          )..load();
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _bannerAd!.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return Container(
+      child: _bannerAd != null
+          ? Container(
+              color: Colors.white,
+              child: SizedBox(
+                height: 50,
+                child: AdWidget(ad: _bannerAd!),
+              ),
+            )
+          : Container(),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

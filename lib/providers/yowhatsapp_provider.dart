@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_native_api/flutter_native_api.dart';
+// ignore: depend_on_referenced_packages
 import 'package:permission_handler/permission_handler.dart';
 import 'package:saf/saf.dart';
 
@@ -28,26 +28,35 @@ class GetYoStatusProvider with ChangeNotifier {
   bool? isGranted;
   Saf? saf;
   Directory? directory;
+  Directory? directory2;
+  Directory? anodir;
 
   initializerYowhatsapp({ctx}) async {
-    directory = Directory(AppConstants.YowhatsppPath);
-    if (directory!.existsSync()) {
-      saf = Saf(AppConstants.safYowhatsappconst);
-      isGranted = await saf!.getDirectoryPermission(isDynamic: false);
-    }
-    status = await Permission.storage.request();
+    _itemsData = DirectoryResponse.loading('loading... ');
+    clearData();
     Future.delayed(
-      const Duration(milliseconds: 500),
+      const Duration(milliseconds: 1000),
     ).then(
-      (value) {
-        getYoWhatAppStatus(ctx: ctx);
+      (value) async {
+        directory = Directory(AppConstants.YowhatsppPath);
+        directory2 = Directory(AppConstants.YowhatsppAlternativePath);
+        if (directory!.existsSync()) {
+          saf = Saf(AppConstants.safYowhatsappconst);
+          isGranted = await saf!.getDirectoryPermission();
+        } else if (directory2!.existsSync()) {
+          saf = Saf(AppConstants.safYowhatsappAlternativeconst);
+          isGranted = await saf!.getDirectoryPermission();
+        }
+        status = await Permission.storage.request();
       },
-    );
-    notifyListeners();
+    ).then((value) {
+      getYoWhatAppStatus(ctx: ctx);
+    });
   }
 
-  clearData() {
+  clearData() async {
     _itemsData = DirectoryResponse.loading('loading... ');
+    // await saf!.clearCache();
     items.clear();
     if (_yogetImagesss.isNotEmpty) {
       _yogetImagesss.clear();
@@ -88,16 +97,23 @@ class GetYoStatusProvider with ChangeNotifier {
   Future<void> getYoWhatAppStatus({ctx}) async {
     _itemsData = DirectoryResponse.loading('loading... ');
     if (directory!.existsSync()) {
-      final anodir = Directory(AppConstants.yoMyStatPath);
+      if (directory!.existsSync()) {
+        anodir = Directory(AppConstants.yoMyStatPath);
+      } else {
+        anodir = Directory(AppConstants.yoMyStatAlternativePath);
+      }
       if (status!.isGranted && isGranted != null && isGranted!) {
         try {
-          if (!anodir.existsSync()) {
+          _itemsData =
+              DirectoryResponse.loading('Please wait, getting statuses');
+          if (anodir!.existsSync()) {
             await saf!.cache();
-          }
-          if (anodir.existsSync() && anodir.listSync().isEmpty) {
             await saf!.sync();
           }
-          items = anodir
+          if (!anodir!.existsSync()) {
+            await saf!.cache();
+          }
+          items = anodir!
               .listSync()
               .map(
                 (e) => StatusModel.fromRTDB(e),
@@ -192,11 +208,14 @@ class GetYoStatusProvider with ChangeNotifier {
 
   bool imageSaved = false;
   resetimageSaved() {
-    imageSaved = false;
-    notifyListeners();
+    if (imageSaved) {
+      imageSaved = false;
+      notifyListeners();
+    }
   }
 
   Future<void> refreshpaths(context) async {
+    clearData();
     getYoWhatAppStatus().then(
       (value) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -221,6 +240,12 @@ class GetYoStatusProvider with ChangeNotifier {
     await saf!.clearCache().then((value) {
       print(value);
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    clearData();
   }
 }
 

@@ -1,17 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import 'package:whatsapp_status_saver/providers/adstate.dart';
-import 'package:whatsapp_status_saver/screens/yowhatsapp/widgets/videos/widgets/videogrid.dart';
 
-class YoWhatsappVideoPage extends StatefulWidget {
+import '../../../../providers/adstate.dart';
+import 'widgets/videogrid.dart';
+
+class YoWhatsappVideoPage extends StatelessWidget {
   const YoWhatsappVideoPage({super.key});
 
   @override
-  State<YoWhatsappVideoPage> createState() => _YoWhatsappVideoPageState();
+  Widget build(BuildContext context) {
+    return Column(
+      children: const [
+        YoBannerVideoAdBar(),
+        Expanded(
+          child: YoVideoGrid(),
+        ),
+      ],
+    );
+  }
 }
 
-class _YoWhatsappVideoPageState extends State<YoWhatsappVideoPage> {
+class YoBannerVideoAdBar extends StatefulWidget {
+  const YoBannerVideoAdBar({super.key});
+
+  @override
+  State<YoBannerVideoAdBar> createState() => _YoBannerVideoAdBarState();
+}
+
+class _YoBannerVideoAdBarState extends State<YoBannerVideoAdBar>
+    with AutomaticKeepAliveClientMixin {
   BannerAd? _bannerAd;
 
   @override
@@ -20,16 +38,20 @@ class _YoWhatsappVideoPageState extends State<YoWhatsappVideoPage> {
     final adState = Provider.of<AdState>(
       context,
     );
-    adState.initialization.then((value) {
-      setState(() {
-        _bannerAd = BannerAd(
-          size: AdSize.banner,
-          adUnitId: AdState.yovideobannerAdUnitId,
-          listener: adState.adListener,
-          request: const AdRequest(),
-        )..load();
-      });
-    });
+    adState.initialization.then(
+      (value) {
+        setState(
+          () {
+            _bannerAd = BannerAd(
+              size: AdSize.banner,
+              adUnitId: AdState.yovideobannerAdUnitId,
+              listener: adState.adListener,
+              request: const AdRequest(),
+            )..load();
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -40,20 +62,20 @@ class _YoWhatsappVideoPageState extends State<YoWhatsappVideoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (_bannerAd != null)
-          Container(
-            color: Colors.white,
-            child: SizedBox(
-              height: 50,
-              child: AdWidget(ad: _bannerAd!),
-            ),
-          ),
-        const Expanded(
-          child: YoVideoGrid(),
-        ),
-      ],
+    super.build(context);
+    return Container(
+      child: _bannerAd != null
+          ? Container(
+              color: Colors.white,
+              child: SizedBox(
+                height: 50,
+                child: AdWidget(ad: _bannerAd!),
+              ),
+            )
+          : Container(),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:permission_handler/permission_handler.dart';
 import 'package:saf/saf.dart';
 
@@ -27,20 +28,30 @@ class BusinessStatusProvider with ChangeNotifier {
   bool? isGranted = false;
   Saf? saf2;
   Directory? directory;
-  initializerWABusiness({ctx}) async {
-    directory = Directory(AppConstants.BWhatsppPath);
-    if (directory!.existsSync()) {
-      saf2 = Saf(AppConstants.safBWhatsppPath);
-      isGranted = await saf2!.getDirectoryPermission(isDynamic: false);
-    }
-    status = await Permission.storage.request();
+  Directory? directory2;
+  Directory? anodir;
+
+  initializerWABusiness({ctx}) {
+    clearData();
     Future.delayed(
       const Duration(milliseconds: 500),
     ).then(
-      (value) {
-        getWABusinessStatus(ctx: ctx);
+      (value) async {
+        directory = Directory(AppConstants.BWhatsppPath);
+        directory2 = Directory(AppConstants.BWhatsppAlternativePath);
+        if (directory!.existsSync()) {
+          saf2 = Saf(AppConstants.safBWhatsppPath);
+          isGranted = await saf2!.getDirectoryPermission(isDynamic: false);
+        } else if (directory2!.existsSync()) {
+          saf2 = Saf(AppConstants.safBWhatsppAlternativePath);
+          isGranted = await saf2!.getDirectoryPermission(isDynamic: false);
+        }
+        status = await Permission.storage.request();
       },
-    );
+    ).then((value) {
+      clearData();
+      getWABusinessStatus(ctx: ctx);
+    });
     notifyListeners();
   }
 
@@ -67,20 +78,24 @@ class BusinessStatusProvider with ChangeNotifier {
   DirectoryResponse<List<StatusModel>> get itemsData => _itemsData;
   Future<void> getWABusinessStatus({ctx}) async {
     _itemsData = DirectoryResponse.loading('loading... ');
-    if (directory!.existsSync()) {
-      final anodir = Directory(AppConstants.bwhatsappMyStatPath);
+    if (directory!.existsSync() || directory2!.existsSync()) {
+      if (directory!.existsSync()) {
+        anodir = Directory(AppConstants.bwhatsappMyStatPath);
+      } else {
+        anodir = Directory(AppConstants.bwhatsappMyStatAlternativePath);
+      }
       if (status!.isGranted && isGranted != null && isGranted!) {
         try {
-          if (!anodir.existsSync()) {
+          _itemsData =
+              DirectoryResponse.loading('Please wait, getting statuses...');
+          if (anodir!.existsSync()) {
             await saf2!.cache();
-            print('cache create');
+            await saf2!.sync();
           }
-          if (anodir.existsSync()) {
-            await saf2!.sync().then((value) {
-              print(value);
-            });
+          if (!anodir!.existsSync()) {
+            await saf2!.cache();
           }
-          items = anodir
+          items = anodir!
               .listSync()
               .map(
                 (e) => StatusModel.fromRTDB(e),
@@ -185,6 +200,7 @@ class BusinessStatusProvider with ChangeNotifier {
   }
 
   Future<void> refreshpaths(context) async {
+    clearData();
     getWABusinessStatus().then(
       (value) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -202,7 +218,13 @@ class BusinessStatusProvider with ChangeNotifier {
         );
       },
     );
-    ;
+
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    clearData();
   }
 }

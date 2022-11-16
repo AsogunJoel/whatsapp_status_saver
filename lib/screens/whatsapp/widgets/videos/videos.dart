@@ -1,17 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import 'package:whatsapp_status_saver/providers/adstate.dart';
-import 'package:whatsapp_status_saver/screens/whatsapp/widgets/videos/widgets/videogrid.dart';
 
-class WhatsappVideoPage extends StatefulWidget {
+import '../../../../providers/adstate.dart';
+import 'widgets/videogrid.dart';
+
+class WhatsappVideoPage extends StatelessWidget {
   const WhatsappVideoPage({super.key});
 
   @override
-  State<WhatsappVideoPage> createState() => _WhatsappVideoPageState();
+  Widget build(BuildContext context) {
+    return Column(
+      children: const [
+        WhatsappVideoBannerAdBar(),
+        Expanded(
+          child: VideoGrid(),
+        ),
+      ],
+    );
+  }
 }
 
-class _WhatsappVideoPageState extends State<WhatsappVideoPage> {
+class WhatsappVideoBannerAdBar extends StatefulWidget {
+  const WhatsappVideoBannerAdBar({super.key});
+
+  @override
+  State<WhatsappVideoBannerAdBar> createState() =>
+      _WhatsappVideoBannerAdBarState();
+}
+
+class _WhatsappVideoBannerAdBarState extends State<WhatsappVideoBannerAdBar>
+    with AutomaticKeepAliveClientMixin {
   BannerAd? _bannerAd;
 
   @override
@@ -40,20 +59,20 @@ class _WhatsappVideoPageState extends State<WhatsappVideoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (_bannerAd != null)
-          Container(
-            color: Colors.white,
-            child: SizedBox(
-              height: 50,
-              child: AdWidget(ad: _bannerAd!),
-            ),
-          ),
-        const Expanded(
-          child: VideoGrid(),
-        ),
-      ],
+    super.build(context);
+    return Container(
+      child: _bannerAd != null
+          ? Container(
+              color: Colors.white,
+              child: SizedBox(
+                height: 50,
+                child: AdWidget(ad: _bannerAd!),
+              ),
+            )
+          : Container(),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

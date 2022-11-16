@@ -72,6 +72,10 @@ class _ImagePageViewState extends State<ImagePageView>
       context,
       listen: false,
     ).getImages[widget.imageIndex].status.path;
+    Provider.of<GetStatusProvider>(
+      context,
+      listen: false,
+    ).resetimageSaved();
   }
 
   void _loadInterstitialAd() {
@@ -80,15 +84,14 @@ class _ImagePageViewState extends State<ImagePageView>
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
+          setState(() {
+            _interstitialAd = ad;
+          });
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               _loadInterstitialAd();
             },
           );
-          setState(() {
-            _interstitialAd = ad;
-            print('new adk,mnbv');
-          });
         },
         onAdFailedToLoad: (err) {
           print('Failed to load an interstitial ad: ${err.message}');
@@ -132,10 +135,8 @@ class _ImagePageViewState extends State<ImagePageView>
             },
             onPageChanged: (value) {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              setState(() {
-                imagePath = file.getImages[value].status.path;
-                pagenumber = value;
-              });
+              imagePath = file.getImages[value].status.path;
+              pagenumber = value;
               file.resetimageSaved();
               _animationController!.reverse();
               if (_interstitialAd == null) {
@@ -155,94 +156,47 @@ class _ImagePageViewState extends State<ImagePageView>
               icon: Icons.save,
               titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
               onPress: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => Dialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: Text(
-                              'Image will be saved to gallery',
-                              style: TextStyle(fontSize: 16),
+                ScaffoldMessenger.of(context).clearSnackBars();
+                _animationController!.reverse();
+                statusProvider.imageSaved
+                    ? ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
                             ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
+                          backgroundColor: Colors.green,
+                          content: Text(
+                            'Picture already saved',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                      )
+                    : statusProvider.saveImagetoGallery(imagePath).then(
+                        (file) {
+                          statusProvider.imageSaved = true;
+                          if (_interstitialAd != null) {
+                            _interstitialAd?.show();
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10),
                                 ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  ScaffoldMessenger.of(context)
-                                      .clearSnackBars();
-                                  _animationController!.reverse();
-                                  statusProvider.imageSaved
-                                      ? ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                          const SnackBar(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            backgroundColor: Colors.green,
-                                            content: Text(
-                                              'Picture already saved',
-                                              style: TextStyle(fontSize: 15),
-                                            ),
-                                          ),
-                                        )
-                                      : statusProvider
-                                          .saveImagetoGallery(imagePath)
-                                          .then(
-                                          (file) {
-                                            if (_interstitialAd != null) {
-                                              _interstitialAd?.show();
-                                            }
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(10),
-                                                    topRight:
-                                                        Radius.circular(10),
-                                                  ),
-                                                ),
-                                                backgroundColor: Colors.green,
-                                                content: Text(
-                                                  'Picture saved',
-                                                  style:
-                                                      TextStyle(fontSize: 15),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                },
-                                child: const Text('Continue'),
                               ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                );
+                              backgroundColor: Colors.green,
+                              content: Text(
+                                'Picture saved',
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            ),
+                          );
+                        },
+                      );
               },
             ),
             Bubble(

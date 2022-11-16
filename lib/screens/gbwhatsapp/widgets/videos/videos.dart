@@ -4,14 +4,32 @@ import 'package:provider/provider.dart';
 import 'package:whatsapp_status_saver/providers/adstate.dart';
 import 'package:whatsapp_status_saver/screens/gbwhatsapp/widgets/videos/widgets/videogrid.dart';
 
-class GBWhatsappVideoPage extends StatefulWidget {
+class GBWhatsappVideoPage extends StatelessWidget {
   const GBWhatsappVideoPage({super.key});
 
   @override
-  State<GBWhatsappVideoPage> createState() => _GBWhatsappVideoPageState();
+  Widget build(BuildContext context) {
+    return Column(
+      children: const [
+        GBWhatsappVideoBannerAdBar(),
+        Expanded(
+          child: GBVideoGrid(),
+        ),
+      ],
+    );
+  }
 }
 
-class _GBWhatsappVideoPageState extends State<GBWhatsappVideoPage> {
+class GBWhatsappVideoBannerAdBar extends StatefulWidget {
+  const GBWhatsappVideoBannerAdBar({super.key});
+
+  @override
+  State<GBWhatsappVideoBannerAdBar> createState() =>
+      GBWhatsappVideoBannerAdBarState();
+}
+
+class GBWhatsappVideoBannerAdBarState extends State<GBWhatsappVideoBannerAdBar>
+    with AutomaticKeepAliveClientMixin {
   BannerAd? _bannerAd;
 
   @override
@@ -40,20 +58,20 @@ class _GBWhatsappVideoPageState extends State<GBWhatsappVideoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (_bannerAd != null)
-          Container(
-            color: Colors.white,
-            child: SizedBox(
-              height: 50,
-              child: AdWidget(ad: _bannerAd!),
-            ),
-          ),
-        const Expanded(
-          child: GBVideoGrid(),
-        ),
-      ],
+    super.build(context);
+    return Container(
+      child: _bannerAd != null
+          ? Container(
+              color: Colors.white,
+              child: SizedBox(
+                height: 50,
+                child: AdWidget(ad: _bannerAd!),
+              ),
+            )
+          : Container(),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:saf/saf.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../constants/constants.dart';
 import '../directory_response/check_directory_response.dart';
@@ -31,21 +32,29 @@ class GetStatusProvider with ChangeNotifier {
   bool? isGranted;
   Saf? saf;
   Directory? directory;
+  Directory? directory2;
+  Directory? anodir;
 
   initializerWhatsapp({ctx}) async {
-    directory = Directory(AppConstants.WhatsppPath);
-    if (directory!.existsSync()) {
-      saf = Saf(AppConstants.safWhatsppPath);
-      isGranted = await saf!.getDirectoryPermission(isDynamic: false);
-    }
-    status = await Permission.storage.request();
+    clearData();
     Future.delayed(
-      const Duration(milliseconds: 500),
+      const Duration(milliseconds: 1000),
     ).then(
-      (value) {
-        getWhatsappStatus(ctx: ctx);
+      (value) async {
+        directory = Directory(AppConstants.WhatsppPath);
+        directory2 = Directory(AppConstants.WhatsppAlternativePath);
+        if (directory!.existsSync()) {
+          saf = Saf(AppConstants.safWhatsppPath);
+          isGranted = await saf!.getDirectoryPermission(isDynamic: false);
+        } else if (directory2!.existsSync()) {
+          saf = Saf(AppConstants.safWhatsppAlternativePath);
+          isGranted = await saf!.getDirectoryPermission(isDynamic: false);
+        }
+        status = await Permission.storage.request();
       },
-    );
+    ).then((value) {
+      getWhatsappStatus(ctx: ctx);
+    });
     notifyListeners();
   }
 
@@ -79,20 +88,24 @@ class GetStatusProvider with ChangeNotifier {
   DirectoryResponse<List<StatusModel>> get itemsData => _itemsData;
   Future<void> getWhatsappStatus({ctx}) async {
     if (directory!.existsSync()) {
-      _itemsData = DirectoryResponse.loading('loading... ');
-      final anodir = Directory(AppConstants.whatsappMyStatPath);
+      if (directory!.existsSync()) {
+        anodir = Directory(AppConstants.whatsappMyStatPath);
+      } else {
+        anodir = Directory(AppConstants.whatsappMyStatAlternativePath);
+      }
       if (status!.isGranted && isGranted != null && isGranted!) {
         try {
-          if (!anodir.existsSync()) {
+          _itemsData =
+              DirectoryResponse.loading('Please wait, getting statuses');
+
+          if (anodir!.existsSync()) {
             await saf!.cache();
-            print('cache create');
+            await saf!.sync();
           }
-          if (anodir.existsSync()) {
-            await saf!.sync().then((value) {
-              print(value);
-            });
+          if (!anodir!.existsSync()) {
+            await saf!.cache();
           }
-          items = anodir
+          items = anodir!
               .listSync()
               .map(
                 (e) => StatusModel.fromRTDB(e),
@@ -193,10 +206,14 @@ class GetStatusProvider with ChangeNotifier {
 
   bool imageSaved = false;
   resetimageSaved() {
-    imageSaved = false;
+    if (imageSaved) {
+      imageSaved = false;
+      notifyListeners();
+    }
   }
 
   Future<void> refreshpaths(context) async {
+    clearData();
     getWhatsappStatus().then(
       (value) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -243,10 +260,32 @@ class GetStatusProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<dynamic> shareLink(videoPath) async {
+    loading = true;
+    await Share.share(videoPath);
+    loading = false;
+    notifyListeners();
+  }
+
   Future<dynamic> printImage(imagePath, imagePathTitle) async {
     loading = true;
     await FlutterNativeApi.printImage(imagePath, imagePathTitle);
     loading = false;
     notifyListeners();
+  }
+
+  Future<void> launchInBrowser(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not launch $url';
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    clearData();
   }
 }

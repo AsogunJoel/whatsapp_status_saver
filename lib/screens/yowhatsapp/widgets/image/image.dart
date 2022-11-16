@@ -9,68 +9,28 @@ import '../../../../providers/yowhatsapp_provider.dart';
 import '../../../widgets/image/singleimage.dart';
 import 'image_view.dart';
 
-class YoWhatsappImagePage extends StatefulWidget {
+class YoWhatsappImagePage extends StatelessWidget {
   const YoWhatsappImagePage({super.key});
-
-  @override
-  State<YoWhatsappImagePage> createState() => _YoWhatsappImagePageState();
-}
-
-class _YoWhatsappImagePageState extends State<YoWhatsappImagePage> {
-  BannerAd? _bannerAd;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(
-      context,
-    );
-    adState.initialization.then(
-      (value) {
-        setState(() {
-          _bannerAd = BannerAd(
-            size: AdSize.banner,
-            adUnitId: AdState.yobannerAdUnitId,
-            listener: adState.adListener,
-            request: const AdRequest(),
-          )..load();
-        });
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _bannerAd!.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          if (_bannerAd != null)
-            Container(
-              color: Colors.white,
-              child: SizedBox(
-                height: 50,
-                child: AdWidget(ad: _bannerAd!),
-              ),
-            ),
+          const YoBannerAdBar(),
           Expanded(
             child: Consumer<GetYoStatusProvider>(
               builder: (context, file, child) {
                 if (file.itemsData.status == Status.LOADING) {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      CircularProgressIndicator(),
+                    children: [
+                      const CircularProgressIndicator(),
                       Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'Please wait...',
-                          style: TextStyle(fontSize: 15),
+                          file.itemsData.message,
+                          style: const TextStyle(fontSize: 15),
                         ),
                       )
                     ],
@@ -169,4 +129,62 @@ class _YoWhatsappImagePageState extends State<YoWhatsappImagePage> {
       ),
     );
   }
+}
+
+class YoBannerAdBar extends StatefulWidget {
+  const YoBannerAdBar({super.key});
+
+  @override
+  State<YoBannerAdBar> createState() => _YoBannerAdBarState();
+}
+
+class _YoBannerAdBarState extends State<YoBannerAdBar>
+    with AutomaticKeepAliveClientMixin {
+  BannerAd? _bannerAd;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final adState = Provider.of<AdState>(
+      context,
+    );
+    adState.initialization.then(
+      (value) {
+        setState(() {
+          _bannerAd = BannerAd(
+            size: AdSize.banner,
+            adUnitId: AdState.yobannerAdUnitId,
+            listener: adState.adListener,
+            request: const AdRequest(),
+          )..load();
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _bannerAd!.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return Container(
+      child: _bannerAd != null
+          ? Container(
+              color: Colors.white,
+              child: SizedBox(
+                height: 50,
+                child: AdWidget(ad: _bannerAd!),
+              ),
+            )
+          : Container(),
+    );
+  }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

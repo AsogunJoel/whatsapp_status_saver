@@ -2,65 +2,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import 'package:whatsapp_status_saver/directory_response/check_directory_response.dart';
-import 'package:whatsapp_status_saver/providers/adstate.dart';
-import 'package:whatsapp_status_saver/providers/gb_provider.dart';
-import 'package:whatsapp_status_saver/screens/wa_business/widgets/image/image_view.dart';
-import 'package:whatsapp_status_saver/screens/widgets/image/singleimage.dart';
-import 'package:whatsapp_status_saver/screens/yowhatsapp/widgets/image/image_view.dart';
 
+import '../../../../directory_response/check_directory_response.dart';
+import '../../../../providers/adstate.dart';
 import '../../../../providers/business_provider.dart';
+import '../../../widgets/image/singleimage.dart';
+import 'image_view.dart';
 
-class BusinessWhatsappImagePage extends StatefulWidget {
+class BusinessWhatsappImagePage extends StatelessWidget {
   const BusinessWhatsappImagePage({super.key});
-
-  @override
-  State<BusinessWhatsappImagePage> createState() =>
-      _BusinessWhatsappImagePageState();
-}
-
-class _BusinessWhatsappImagePageState extends State<BusinessWhatsappImagePage> {
-  BannerAd? _bannerAd;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(
-      context,
-    );
-    adState.initialization.then(
-      (value) {
-        setState(() {
-          _bannerAd = BannerAd(
-            size: AdSize.banner,
-            adUnitId: AdState.businessbannerAdUnitId,
-            listener: adState.adListener,
-            request: const AdRequest(),
-          )..load();
-        });
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _bannerAd!.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          if (_bannerAd != null)
-            Container(
-              color: Colors.white,
-              child: SizedBox(
-                height: 50,
-                child: AdWidget(ad: _bannerAd!),
-              ),
-            ),
+          const BusinessWhatsappBannerAdBar(),
           Expanded(
             child: Consumer<BusinessStatusProvider>(
               builder: (context, file, child) {
@@ -155,4 +112,63 @@ class _BusinessWhatsappImagePageState extends State<BusinessWhatsappImagePage> {
       ),
     );
   }
+}
+
+class BusinessWhatsappBannerAdBar extends StatefulWidget {
+  const BusinessWhatsappBannerAdBar({super.key});
+
+  @override
+  State<BusinessWhatsappBannerAdBar> createState() =>
+      _BusinessWhatsappBannerAdBarState();
+}
+
+class _BusinessWhatsappBannerAdBarState
+    extends State<BusinessWhatsappBannerAdBar>
+    with AutomaticKeepAliveClientMixin {
+  BannerAd? _bannerAd;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final adState = Provider.of<AdState>(
+      context,
+    );
+    adState.initialization.then(
+      (value) {
+        setState(() {
+          _bannerAd = BannerAd(
+            size: AdSize.banner,
+            adUnitId: AdState.businessbannerAdUnitId,
+            listener: adState.adListener,
+            request: const AdRequest(),
+          )..load();
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _bannerAd!.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return Container(
+      child: _bannerAd != null
+          ? Container(
+              color: Colors.white,
+              child: SizedBox(
+                height: 50,
+                child: AdWidget(ad: _bannerAd!),
+              ),
+            )
+          : Container(),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -12,14 +12,9 @@ class SingleGridImage extends StatefulWidget {
   State<SingleGridImage> createState() => _SingleGridImageState();
 }
 
-class _SingleGridImageState extends State<SingleGridImage>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
+class _SingleGridImageState extends State<SingleGridImage> {
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey.shade300,

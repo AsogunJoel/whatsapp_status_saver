@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:whatsapp_status_saver/screens/privacypolicy/privacy_policy.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/get_statuses_provider.dart';
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer({super.key});
@@ -57,7 +58,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 fontSize: 15,
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              Provider.of<GetStatusProvider>(context, listen: false).shareLink(
+                  'https://play.google.com/store/apps/details?id=com.joelasogunshoguncoder.whatsapp_status_saver');
+            },
           ),
           ListTile(
             leading: const Icon(Icons.star),
@@ -67,30 +71,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 fontSize: 15,
               ),
             ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.policy),
-            title: const Text(
-              'Privacy Policy',
-              style: TextStyle(
-                fontSize: 15,
-              ),
-            ),
             onTap: () {
-              // Navigator.of(context)
-              //     .push(
-              //   CupertinoPageRoute(
-              //     builder: (context) => const PrivacyPolicy(),
-              //   ),
-              // )
-              //     .then(
-              //   (value) {
-              //     if (Scaffold.of(context).isDrawerOpen) {
-              //       Scaffold.of(context).closeDrawer();
-              //     }
-              //   },
-              // );
+              Provider.of<GetStatusProvider>(context, listen: false)
+                  .launchInBrowser(
+                Uri.parse(
+                    'https://play.google.com/store/apps/details?id=com.joelasogunshoguncoder.whatsapp_status_saver'),
+              );
             },
           ),
           ListTile(
@@ -101,16 +87,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 fontSize: 15,
               ),
             ),
-            onTap: () {
-              // if (Scaffold.of(context).isDrawerOpen) {
-              //   Scaffold.of(context).closeDrawer();
-              // }
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => const PrivacyPolicy(),
-              //   ),
-              // );
-            },
+            onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.info),
